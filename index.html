@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Practice Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', cursive, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 50%, #fff0f8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            font-size: 20px;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
+            max-width: 650px;
+            width: 100%;
+            padding: 40px;
+            border: 5px solid #ffb3d9;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #ff69b4, #ff1493, #ff69b4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.8em;
+            text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.3);
+        }
+
+        .setup-screen, .game-screen, .results-screen {
+            display: none;
+        }
+
+        .setup-screen.active, .game-screen.active, .results-screen.active {
+            display: block;
+        }
+
+        .option-group {
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #fff5f9, #ffe6f2);
+            padding: 20px;
+            border-radius: 20px;
+            border: 3px solid #ffcceb;
+        }
+
+        .option-group label {
+            display: block;
+            font-size: 1.4em;
+            color: #ff1493;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .option-btn {
+            padding: 18px 28px;
+            border: 3px solid #ff69b4;
+            background: white;
+            color: #ff1493;
+            border-radius: 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
+        }
+
+        .option-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+        }
+
+        .option-btn.selected {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .times-table-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+        }
+
+        .times-table-btn {
+            padding: 15px;
+            border: 3px solid #ff69b4;
+            background: white;
+            color: #ff1493;
+            border-radius: 15px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 700;
+            box-shadow: 0 3px 10px rgba(255, 105, 180, 0.2);
+        }
+
+        .times-table-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 105, 180, 0.4);
+        }
+
+        .times-table-btn.selected {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 25px;
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.5em;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            margin-top: 20px;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+        }
+
+        .start-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 105, 180, 0.5);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .problem-container {
+            text-align: center;
+            margin: 40px 0;
+            background: linear-gradient(135deg, #fff5f9, #ffe6f2);
+            padding: 30px;
+            border-radius: 25px;
+            border: 3px solid #ffcceb;
+        }
+
+        .progress {
+            font-size: 1.3em;
+            color: #ff1493;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .emoji-decoration {
+            font-size: 2.5em;
+            margin: 10px;
+            display: inline-block;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .problem {
+            font-size: 3.5em;
+            color: #ff1493;
+            margin: 30px 0;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.3);
+        }
+
+        /* Updated answer display - no longer input field */
+        .answer-display {
+            width: 100%;
+            padding: 25px;
+            font-size: 2.2em;
+            text-align: center;
+            border: 4px solid #ff69b4;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            background: white;
+            color: #ff1493;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: text;
+        }
+
+        .answer-display:focus {
+            outline: none;
+            border-color: #ff1493;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+        }
+
+        /* Custom Numpad Styles - Updated for 4x3 layout */
+        .numpad-container {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #fff5f9, #ffe6f2);
+            padding: 20px;
+            border-radius: 20px;
+            border: 3px solid #ffcceb;
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .numpad-btn {
+            padding: 20px;
+            font-size: 1.8em;
+            font-weight: 700;
+            border: 3px solid #ff69b4;
+            background: white;
+            color: #ff1493;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .numpad-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 18px rgba(255, 105, 180, 0.4);
+        }
+
+        .numpad-btn:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+        }
+
+        .numpad-btn.special {
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            color: white;
+            font-size: 1.4em;
+        }
+
+        .numpad-btn.enter {
+            background: linear-gradient(135deg, #32cd32, #228b22);
+            color: white;
+        }
+
+        .numpad-btn.delete {
+            background: linear-gradient(135deg, #ff6b9d, #ff1493);
+            color: white;
+        }
+
+        .feedback {
+            min-height: 50px;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .feedback.wrong {
+            color: #ff6b9d;
+            animation: shake 0.5s;
+        }
+
+        .feedback.correct {
+            color: #ff1493;
+            animation: celebrate 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .results-screen h2 {
+            color: #ff1493;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.3em;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #fff5f9, #ffe6f2);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 3px solid #ffcceb;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 2px dotted #ffb3d9;
+            font-size: 1.2em;
+            color: #ff1493;
+            font-weight: 600;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .time-breakdown {
+            margin-top: 30px;
+        }
+
+        .time-breakdown h3 {
+            color: #ff1493;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        .time-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: white;
+            margin-bottom: 8px;
+            border-radius: 15px;
+            border: 2px solid #ffcceb;
+            font-weight: 600;
+            color: #ff1493;
+        }
+
+        .slow {
+            background: linear-gradient(135deg, #ffe0f0, #fff0f8);
+            border-color: #ff69b4;
+        }
+
+        .restart-btn {
+            width: 100%;
+            padding: 25px;
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.4em;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 105, 180, 0.5);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .problem {
+                font-size: 2.8em;
+            }
+
+            .answer-display {
+                font-size: 1.8em;
+                padding: 20px;
+            }
+
+            .times-table-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .numpad {
+                gap: 12px;
+            }
+
+            .numpad-btn {
+                padding: 18px;
+                font-size: 1.6em;
+                min-height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <h1>✨ Magic Math Adventure ✨</h1>
+
+        <!-- Setup Screen -->
+        <div class="setup-screen active">
+            <div class="option-group">
+                <label>🌈 Choose Your Magic Power! 🌈</label>
+                <div class="button-group">
+                    <button class="option-btn" data-option="operation" data-value="addition">➕ Adding</button>
+                    <button class="option-btn" data-option="operation" data-value="subtraction">➖ Taking Away</button>
+                    <button class="option-btn" data-option="operation" data-value="multiplication">✖️ Times Tables</button>
+                    <button class="option-btn" data-option="operation" data-value="division">➗ Sharing</button>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <label>🎯 How Many Questions? 🎯</label>
+                <div class="button-group">
+                    <button class="option-btn" data-option="count" data-value="5">5</button>
+                    <button class="option-btn" data-option="count" data-value="10">10</button>
+                    <button class="option-btn" data-option="count" data-value="20">20</button>
+                    <button class="option-btn" data-option="count" data-value="30">30</button>
+                </div>
+            </div>
+
+            <div class="option-group" id="rangeGroup">
+                <label>💫 Choose Your Level! 💫</label>
+                <div class="button-group">
+                    <button class="option-btn" data-option="limit" data-value="10">Up to 10</button>
+                    <button class="option-btn" data-option="limit" data-value="20">Up to 20</button>
+                    <button class="option-btn" data-option="limit" data-value="50">Up to 50</button>
+                    <button class="option-btn" data-option="limit" data-value="100">Up to 100</button>
+                </div>
+            </div>
+
+            <div class="option-group hidden" id="difficultyGroup">
+                <label>🌟 Choose Difficulty! 🌟</label>
+                <div class="button-group">
+                    <button class="option-btn" data-option="difficulty" data-value="easy">🌸 Easy (No borrowing/carrying)</button>
+                    <button class="option-btn" data-option="difficulty" data-value="hard">💪 Hard (With borrowing/carrying)</button>
+                </div>
+            </div>
+
+            <div class="option-group hidden" id="timesTableGroup">
+                <label>🎪 Pick Your Times Tables! (Choose one or more) 🎪</label>
+                <div class="times-table-grid" id="timesTableGrid">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <button class="start-btn" id="startBtn" disabled>🚀 Start Adventure! 🚀</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen">
+            <div class="progress" id="progress">Question 1 of 10</div>
+            <div class="problem-container">
+                <div class="emoji-decoration">🌟</div>
+                <div class="problem" id="problem">5 + 3 = ?</div>
+                <div class="emoji-decoration">🦋</div>
+                <div class="answer-display" id="answerDisplay">Your answer</div>
+                <div class="feedback" id="feedback"></div>
+
+                <!-- Custom Numpad - Updated to 4x3 layout -->
+                <div class="numpad-container">
+                    <div class="numpad">
+                        <button class="numpad-btn" data-number="1">1</button>
+                        <button class="numpad-btn" data-number="2">2</button>
+                        <button class="numpad-btn" data-number="3">3</button>
+                        <button class="numpad-btn" data-number="4">4</button>
+                        <button class="numpad-btn" data-number="5">5</button>
+                        <button class="numpad-btn" data-number="6">6</button>
+                        <button class="numpad-btn" data-number="7">7</button>
+                        <button class="numpad-btn" data-number="8">8</button>
+                        <button class="numpad-btn" data-number="9">9</button>
+                        <button class="numpad-btn delete special" id="deleteBtn">🗑️ Del</button>
+                        <button class="numpad-btn" data-number="0">0</button>
+                        <button class="numpad-btn enter special" id="enterBtn">✨ Enter ✨</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-screen">
+            <h2>🎉 Amazing Job! You're a Star! 🎉</h2>
+            <div class="summary">
+                <div class="summary-item">
+                    <span><strong>⏱️ Total Time:</strong></span>
+                    <span id="totalTime">0:00</span>
+                </div>
+                <div class="summary-item">
+                    <span><strong>⚡ Average Time:</strong></span>
+                    <span id="avgTime">0s</span>
+                </div>
+                <div class="summary-item">
+                    <span><strong>🎯 Total Tries:</strong></span>
+                    <span id="totalAttempts">0</span>
+                </div>
+            </div>
+
+            <div class="time-breakdown">
+                <h3>🌈 Which ones took longest? 🌈</h3>
+                <div id="timeList"></div>
+            </div>
+
+            <button class="restart-btn" id="restartBtn">🌸 Play Again! 🌸</button>
+        </div>
+    </div>
+
+    <script>
+        // Sound effects using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            // Set volume
+            gainNode.gain.value = 0.3;
+
+            const now = audioContext.currentTime;
+
+            switch(type) {
+                case 'select':
+                    // Happy click sound
+                    oscillator.frequency.setValueAtTime(800, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(1000, now + 0.1);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.1);
+                    break;
+
+                case 'correct':
+                    // Success chime (ascending notes)
+                    oscillator.frequency.setValueAtTime(523, now); // C
+                    oscillator.frequency.setValueAtTime(659, now + 0.1); // E
+                    oscillator.frequency.setValueAtTime(784, now + 0.2); // G
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.4);
+                    break;
+
+                case 'wrong':
+                    // Gentle "try again" sound (descending)
+                    oscillator.frequency.setValueAtTime(400, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, now + 0.2);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.2);
+                    break;
+
+                case 'complete':
+                    // Victory fanfare (multiple notes)
+                    const notes = [523, 659, 784, 1047]; // C, E, G, C
+                    notes.forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+
+                        osc.frequency.setValueAtTime(freq, now + i * 0.15);
+                        gain.gain.setValueAtTime(0.2, now + i * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.15 + 0.3);
+
+                        osc.start(now + i * 0.15);
+                        osc.stop(now + i * 0.15 + 0.3);
+                    });
+                    return; // Exit early since we handled multiple oscillators
+            }
+        }
+
+        // Create floating stars
+        const starsContainer = document.getElementById('stars');
+        const starEmojis = ['⭐', '✨', '🌟', '💫', '🌸', '🦋', '💖', '🎀'];
+
+        for (let i = 0; i < 20; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.textContent = starEmojis[Math.floor(Math.random() * starEmojis.length)];
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        const state = {
+            operation: null,
+            count: null,
+            limit: null,
+            difficulty: null,
+            selectedTables: [],
+            currentProblem: 0,
+            problems: [],
+            startTime: null,
+            problemTimes: [],
+            totalAttempts: 0,
+            currentAnswer: ''
+        };
+
+        // Create times table buttons
+        const timesTableGrid = document.getElementById('timesTableGrid');
+        for (let i = 1; i <= 12; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'times-table-btn';
+            btn.textContent = i;
+            btn.dataset.table = i;
+            btn.addEventListener('click', () => toggleTimesTable(i, btn));
+            timesTableGrid.appendChild(btn);
+        }
+
+        function toggleTimesTable(num, btn) {
+            const index = state.selectedTables.indexOf(num);
+            if (index > -1) {
+                state.selectedTables.splice(index, 1);
+                btn.classList.remove('selected');
+            } else {
+                state.selectedTables.push(num);
+                btn.classList.add('selected');
+            }
+            playSound('select');
+            checkStartButton();
+        }
+
+        // Setup screen handlers
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const option = btn.dataset.option;
+                const value = btn.dataset.value;
+
+                document.querySelectorAll(`[data-option="${option}"]`).forEach(b => {
+                    b.classList.remove('selected');
+                });
+
+                btn.classList.add('selected');
+                state[option] = value;
+
+                playSound('select');
+
+                // Show/hide appropriate groups based on operation
+                if (option === 'operation') {
+                    const isMultDiv = value === 'multiplication' || value === 'division';
+                    const isAddSub = value === 'addition' || value === 'subtraction';
+
+                    document.getElementById('rangeGroup').classList.toggle('hidden', isMultDiv);
+                    document.getElementById('timesTableGroup').classList.toggle('hidden', !isMultDiv);
+                    document.getElementById('difficultyGroup').classList.toggle('hidden', !isAddSub);
+
+                    // Reset selections
+                    if (isMultDiv) {
+                        state.limit = null;
+                        state.difficulty = null;
+                    } else {
+                        state.selectedTables = [];
+                        document.querySelectorAll('.times-table-btn').forEach(b => b.classList.remove('selected'));
+                    }
+                }
+
+                checkStartButton();
+            });
+        });
+
+        function checkStartButton() {
+            const startBtn = document.getElementById('startBtn');
+            let canStart = state.operation && state.count;
+
+            if (state.operation === 'multiplication' || state.operation === 'division') {
+                canStart = canStart && state.selectedTables.length > 0;
+            } else {
+                canStart = canStart && state.limit && state.difficulty;
+            }
+
+            startBtn.disabled = !canStart;
+        }
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            playSound('select');
+            startGame();
+        });
+
+        // Numpad event handlers
+        document.querySelectorAll('.numpad-btn[data-number]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const number = btn.dataset.number;
+                addNumber(number);
+                playSound('select');
+            });
+        });
+
+        document.getElementById('deleteBtn').addEventListener('click', () => {
+            deleteLastNumber();
+            playSound('select');
+        });
+
+        document.getElementById('enterBtn').addEventListener('click', () => {
+            checkAnswer();
+        });
+
+        function addNumber(num) {
+            // Prevent too many digits (reasonable limit)
+            if (state.currentAnswer.length < 10) {
+                state.currentAnswer += num;
+                updateAnswerDisplay();
+            }
+        }
+
+        function deleteLastNumber() {
+            state.currentAnswer = state.currentAnswer.slice(0, -1);
+            updateAnswerDisplay();
+        }
+
+        function updateAnswerDisplay() {
+            const display = document.getElementById('answerDisplay');
+            display.textContent = state.currentAnswer || 'Your answer';
+        }
+
+        function startGame() {
+            state.problems = generateProblems();
+            state.currentProblem = 0;
+            state.problemTimes = [];
+            state.totalAttempts = 0;
+            state.currentAnswer = '';
+
+            document.querySelector('.setup-screen').classList.remove('active');
+            document.querySelector('.game-screen').classList.add('active');
+
+            showProblem();
+        }
+
+        function generateProblems() {
+            const problems = [];
+            const count = parseInt(state.count);
+
+            for (let i = 0; i < count; i++) {
+                let num1, num2, answer;
+
+                if (state.operation === 'multiplication') {
+                    // Pick random table from selected tables
+                    const table = state.selectedTables[Math.floor(Math.random() * state.selectedTables.length)];
+                    const multiplier = Math.floor(Math.random() * 12) + 1;
+                    num1 = table;
+                    num2 = multiplier;
+                    answer = num1 * num2;
+                } else if (state.operation === 'division') {
+                    // Pick random table from selected tables
+                    const table = state.selectedTables[Math.floor(Math.random() * state.selectedTables.length)];
+                    const multiplier = Math.floor(Math.random() * 12) + 1;
+                    num1 = table * multiplier;
+                    num2 = table;
+                    answer = num1 / num2;
+                } else {
+                    // Addition and subtraction
+                    const limit = parseInt(state.limit);
+                    let minNum, maxNum;
+
+                    if (limit === 10) {
+                        minNum = 1;
+                        maxNum = 10;
+                    } else if (limit === 20) {
+                        minNum = 11;
+                        maxNum = 20;
+                    } else if (limit === 50) {
+                        minNum = 21;
+                        maxNum = 50;
+                    } else {
+                        minNum = 51;
+                        maxNum = 100;
+                    }
+
+                    if (state.operation === 'addition') {
+                        if (state.difficulty === 'easy') {
+                            // Easy: no carrying (ones digits sum to 9 or less)
+                            let attempts = 0;
+                            do {
+                                num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                                num2 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                                attempts++;
+                                if (attempts > 100) {
+                                    // Fallback: manually create easy addition
+                                    num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                                    const onesDigit1 = num1 % 10;
+                                    const maxOnesDigit2 = 9 - onesDigit1;
+                                    const onesDigit2 = Math.floor(Math.random() * (maxOnesDigit2 + 1));
+                                    const tensMultiple = Math.floor(Math.random() * Math.floor((maxNum - minNum) / 10 + 1)) * 10;
+                                    num2 = Math.max(minNum, Math.min(maxNum, tensMultiple + onesDigit2));
+                                    break;
+                                }
+                            } while ((num1 % 10) + (num2 % 10) > 9);
+                        } else {
+                            // Hard: requires carrying (ones digits sum to 10 or more)
+                            let attempts = 0;
+                            do {
+                                num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                                num2 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                                attempts++;
+                                if (attempts > 100) {
+                                    // Fallback: manually create hard addition
+                                    num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                                    const onesDigit1 = num1 % 10;
+                                    const minOnesDigit2 = Math.max(0, 10 - onesDigit1);
+                                    const onesDigit2 = Math.floor(Math.random() * (10 - minOnesDigit2)) + minOnesDigit2;
+                                    const tensMultiple = Math.floor(Math.random() * Math.floor((maxNum - minNum) / 10 + 1)) * 10;
+                                    num2 = Math.max(minNum, Math.min(maxNum, tensMultiple + onesDigit2));
+                                    break;
+                                }
+                            } while ((num1 % 10) + (num2 % 10) < 10);
+                        }
+                        answer = num1 + num2;
+                    } else {
+                        // Subtraction
+                        if (state.difficulty === 'easy') {
+                            // Easy: no borrowing (ones digit of num1 >= ones digit of num2)
+                            let attempts = 0;
+                            do {
+                                num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                                num2 = Math.floor(Math.random() * num1) + 1;
+                                attempts++;
+                                if (attempts > 100) {
+                                    // Fallback: manually create easy subtraction
+                                    num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                                    const onesDigit1 = num1 % 10;
+                                    const onesDigit2 = Math.floor(Math.random() * (onesDigit1 + 1));
+                                    const maxTens = Math.floor(num1 / 10);
+                                    const tensDigit2 = Math.floor(Math.random() * (maxTens + 1));
+                                    num2 = tensDigit2 * 10 + onesDigit2;
+                                    if (num2 === 0) num2 = 1;
+                                    break;
+                                }
+                            } while ((num1 % 10) < (num2 % 10));
+                        } else {
+                            // Hard: requires borrowing (ones digit of num1 < ones digit of num2)
+                            let attempts = 0;
+                            do {
+                                num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                                num2 = Math.floor(Math.random() * num1) + 1;
+                                attempts++;
+                                if (attempts > 100) {
+                                    // Fallback: manually create hard subtraction
+                                    num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                                    const onesDigit1 = num1 % 10;
+                                    const minOnesDigit2 = onesDigit1 + 1;
+                                    if (minOnesDigit2 <= 9) {
+                                        const onesDigit2 = Math.floor(Math.random() * (10 - minOnesDigit2)) + minOnesDigit2;
+                                        const maxTens = Math.floor(num1 / 10) - 1;
+                                        if (maxTens >= 0) {
+                                            const tensDigit2 = Math.floor(Math.random() * (maxTens + 1));
+                                            num2 = tensDigit2 * 10 + onesDigit2;
+                                        } else {
+                                            num2 = onesDigit2;
+                                        }
+                                        if (num2 >= num1 || num2 === 0) num2 = Math.max(1, Math.floor(num1 / 2));
+                                    } else {
+                                        num2 = Math.max(1, Math.floor(num1 / 2));
+                                    }
+                                    break;
+                                }
+                            } while (num2 >= num1 || (num1 % 10) >= (num2 % 10));
+                        }
+                        answer = num1 - num2;
+                    }
+                }
+
+                problems.push({ num1, num2, answer, attempts: 0 });
+            }
+
+            return problems;
+        }
+
+        function showProblem() {
+            const problem = state.problems[state.currentProblem];
+            state.startTime = Date.now();
+            state.currentAnswer = '';
+
+            const operations = {
+                addition: '+',
+                subtraction: '-',
+                multiplication: '×',
+                division: '÷'
+            };
+
+            const op = operations[state.operation];
+
+            document.getElementById('progress').textContent = 
+                `Question ${state.currentProblem + 1} of ${state.count}`;
+            document.getElementById('problem').textContent = 
+                `${problem.num1} ${op} ${problem.num2} = ?`;
+
+            updateAnswerDisplay();
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+        }
+
+        function checkAnswer() {
+            if (!state.currentAnswer.trim()) {
+                document.getElementById('feedback').textContent = '💭 Please enter a number using the numpad!';
+                document.getElementById('feedback').className = 'feedback wrong';
+                return;
+            }
+
+            const userAnswer = parseFloat(state.currentAnswer);
+            const problem = state.problems[state.currentProblem];
+
+            if (isNaN(userAnswer)) {
+                document.getElementById('feedback').textContent = '💭 Please enter a valid number!';
+                document.getElementById('feedback').className = 'feedback wrong';
+                return;
+            }
+
+            problem.attempts++;
+            state.totalAttempts++;
+
+            if (Math.abs(userAnswer - problem.answer) < 0.001) {
+                const timeSpent = (Date.now() - state.startTime) / 1000;
+                state.problemTimes.push({
+                    problem: `${problem.num1} ${getOpSymbol()} ${problem.num2}`,
+                    time: timeSpent,
+                    attempts: problem.attempts
+                });
+
+                playSound('correct');
+
+                const celebrations = ['✨ Perfect!', '🌟 Amazing!', '💖 Brilliant!', '🎉 Wonderful!', '⭐ Superstar!'];
+                document.getElementById('feedback').textContent = celebrations[Math.floor(Math.random() * celebrations.length)];
+                document.getElementById('feedback').className = 'feedback correct';
+
+                setTimeout(() => {
+                    state.currentProblem++;
+                    if (state.currentProblem < state.problems.length) {
+                        showProblem();
+                    } else {
+                        showResults();
+                    }
+                }, 1000);
+            } else {
+                playSound('wrong');
+
+                document.getElementById('feedback').textContent = 
+                    '💭 Oops! Try again sweetie!';
+                document.getElementById('feedback').className = 'feedback wrong';
+                state.currentAnswer = '';
+                updateAnswerDisplay();
+            }
+        }
+
+        function getOpSymbol() {
+            const operations = {
+                addition: '+',
+                subtraction: '-',
+                multiplication: '×',
+                division: '÷'
+            };
+            return operations[state.operation];
+        }
+
+        function showResults() {
+            document.querySelector('.game-screen').classList.remove('active');
+            document.querySelector('.results-screen').classList.add('active');
+
+            playSound('complete');
+
+            const totalTime = state.problemTimes.reduce((sum, p) => sum + p.time, 0);
+            const avgTime = totalTime / state.problemTimes.length;
+
+            document.getElementById('totalTime').textContent = formatTime(totalTime);
+            document.getElementById('avgTime').textContent = avgTime.toFixed(1) + 's';
+            document.getElementById('totalAttempts').textContent = state.totalAttempts;
+
+            // Sort by time (slowest first)
+            const sorted = [...state.problemTimes].sort((a, b) => b.time - a.time);
+
+            const timeList = document.getElementById('timeList');
+            timeList.innerHTML = '';
+
+            sorted.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'time-item';
+                if (index < 3) div.classList.add('slow');
+
+                const emoji = index === 0 ? '🐌' : index === 1 ? '🐢' : index === 2 ? '🐇' : '⚡';
+
+                div.innerHTML = `
+                    <span>${emoji} ${item.problem} = ?</span>
+                    <span>${item.time.toFixed(1)}s (${item.attempts} ${item.attempts > 1 ? 'tries' : 'try'})</span>
+                `;
+                timeList.appendChild(div);
+            });
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            playSound('select');
+            document.querySelector('.results-screen').classList.remove('active');
+            document.querySelector('.setup-screen').classList.add('active');
+        });
+    </script>
+</body>
+</html>
