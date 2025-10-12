@@ -240,11 +240,11 @@
             box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
         }
 
-        /* Custom Numpad Styles - Updated for 4x3 layout */
+        /* Optimized Numpad Styles - Compact and uniform */
         .numpad-container {
-            margin-top: 20px;
+            margin-top: 15px;
             background: linear-gradient(135deg, #fff5f9, #ffe6f2);
-            padding: 20px;
+            padding: 15px;
             border-radius: 20px;
             border: 3px solid #ffcceb;
         }
@@ -253,42 +253,47 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(4, 1fr);
-            gap: 15px;
-            max-width: 300px;
+            gap: 10px;
+            max-width: 280px;
             margin: 0 auto;
         }
 
         .numpad-btn {
-            padding: 20px;
-            font-size: 1.8em;
+            padding: 15px 10px;
+            font-size: 1.6em;
             font-weight: 700;
             border: 3px solid #ff69b4;
             background: white;
             color: #ff1493;
-            border-radius: 15px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
-            min-height: 70px;
+            transition: all 0.2s;
+            box-shadow: 0 3px 8px rgba(255, 105, 180, 0.2);
+            min-height: 55px;
+            max-height: 55px;
+            min-width: 85px;
             display: flex;
             align-items: center;
             justify-content: center;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .numpad-btn:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 6px 18px rgba(255, 105, 180, 0.4);
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
         }
 
         .numpad-btn:active {
             transform: translateY(1px) scale(0.98);
-            box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+            box-shadow: 0 1px 4px rgba(255, 105, 180, 0.2);
         }
 
         .numpad-btn.special {
             background: linear-gradient(135deg, #ffd700, #ffb347);
             color: white;
-            font-size: 1.4em;
+            font-size: 1.2em;
         }
 
         .numpad-btn.enter {
@@ -408,7 +413,7 @@
 
         @media (max-width: 600px) {
             .container {
-                padding: 25px;
+                padding: 20px;
             }
 
             h1 {
@@ -428,14 +433,43 @@
                 grid-template-columns: repeat(4, 1fr);
             }
 
+            .numpad-container {
+                padding: 12px;
+            }
+
             .numpad {
-                gap: 12px;
+                gap: 8px;
+                max-width: 260px;
             }
 
             .numpad-btn {
-                padding: 18px;
-                font-size: 1.6em;
-                min-height: 60px;
+                padding: 12px 8px;
+                font-size: 1.4em;
+                min-height: 50px;
+                max-height: 50px;
+                min-width: 78px;
+            }
+
+            .numpad-btn.special {
+                font-size: 1.1em;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .numpad {
+                max-width: 240px;
+            }
+
+            .numpad-btn {
+                padding: 10px 6px;
+                font-size: 1.3em;
+                min-height: 45px;
+                max-height: 45px;
+                min-width: 72px;
+            }
+
+            .numpad-btn.special {
+                font-size: 1.0em;
             }
         }
     </style>
@@ -506,7 +540,7 @@
                 <div class="answer-display" id="answerDisplay">Your answer</div>
                 <div class="feedback" id="feedback"></div>
 
-                <!-- Custom Numpad - Updated to 4x3 layout -->
+                <!-- Optimized Compact Numpad -->
                 <div class="numpad-container">
                     <div class="numpad">
                         <button class="numpad-btn" data-number="1">1</button>
@@ -518,9 +552,9 @@
                         <button class="numpad-btn" data-number="7">7</button>
                         <button class="numpad-btn" data-number="8">8</button>
                         <button class="numpad-btn" data-number="9">9</button>
-                        <button class="numpad-btn delete special" id="deleteBtn">🗑️ Del</button>
+                        <button class="numpad-btn delete special" id="deleteBtn">Del</button>
                         <button class="numpad-btn" data-number="0">0</button>
-                        <button class="numpad-btn enter special" id="enterBtn">✨ Enter ✨</button>
+                        <button class="numpad-btn enter special" id="enterBtn">Enter</button>
                     </div>
                 </div>
             </div>
