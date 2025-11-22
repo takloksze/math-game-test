@@ -227,6 +227,48 @@
             color: white;
         }
 
+        .operation-select {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .btn-operation {
+            padding: 12px 24px;
+            border: 3px solid var(--accent);
+            background: white;
+            color: var(--accent);
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-operation.selected {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-go {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #00E5FF, #00b8d4);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .btn-go:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .hidden {
             display: none !important;
         }
@@ -527,8 +569,20 @@
                 </div>
 
                 <div class="option-group hidden" id="timesTableGroup">
-                    <label>🎪 Pick Your Times Tables! (Choose one or more) 🎪</label>
+                    <label>Choose operation type:</label>
+                    <div class="operation-select">
+                        <button class="btn-operation" data-op="multiplication">× Multiplication</button>
+                        <button class="btn-operation" data-op="division">÷ Division</button>
+                        <button class="btn-operation" data-op="both">Both</button>
+                    </div>
+                    
+                    <label style="margin-top: 15px;">How many questions?</label>
+                    <div class="count-grid" id="timesTableCountMenu"></div>
+                    
+                    <label style="margin-top: 15px;">🎪 Pick Your Times Tables! (Choose one or more) 🎪</label>
                     <div class="times-table-grid" id="timesTableGrid"></div>
+                    
+                    <button class="btn-go" id="goBtn" disabled>🚀 Go!</button>
                 </div>
             </div>
         </div>
@@ -611,6 +665,9 @@
             counts: [5, 10, 15, 20],
             currentUser: null,
             selectedTables: [],
+            timesTableOperation: null,
+            timesTableCount: 10,
+            usedQuestions: new Set(),
             state: { 
                 year: 0, 
                 count: 10, 
@@ -718,6 +775,35 @@
                     btn.addEventListener('click', () => this.toggleTimesTable(i, btn));
                     timesTableGrid.appendChild(btn);
                 }
+
+                // Create times table count buttons
+                const timesTableCountMenu = document.getElementById('timesTableCountMenu');
+                this.counts.forEach(c => {
+                    let btn = document.createElement('button');
+                    btn.className = 'btn-count';
+                    if(c === 10) btn.classList.add('selected');
+                    btn.textContent = c;
+                    btn.onclick = () => this.selectTimesTableCount(c);
+                    timesTableCountMenu.appendChild(btn);
+                });
+
+                // Operation buttons for times tables
+                document.querySelectorAll('.btn-operation').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.btn-operation').forEach(b => b.classList.remove('selected'));
+                        e.target.classList.add('selected');
+                        this.timesTableOperation = e.target.dataset.op;
+                        this.play('tap');
+                        this.checkGoButton();
+                    });
+                });
+
+                // Go button
+                document.getElementById('goBtn').addEventListener('click', () => {
+                    if(this.selectedTables.length > 0 && this.timesTableOperation) {
+                        this.start(100);
+                    }
+                });
             },
 
             toggleTimesTable: function(num, btn) {
@@ -729,7 +815,20 @@
                     this.selectedTables.push(num);
                     btn.classList.add('selected');
                 }
-                this.play('select');
+                this.play('tap');
+                this.checkGoButton();
+            },
+
+            selectTimesTableCount: function(count) {
+                this.timesTableCount = count;
+                document.querySelectorAll('#timesTableCountMenu .btn-count').forEach(b => b.classList.remove('selected'));
+                event.target.classList.add('selected');
+                this.play('tap');
+            },
+
+            checkGoButton: function() {
+                const goBtn = document.getElementById('goBtn');
+                goBtn.disabled = !(this.selectedTables.length > 0 && this.timesTableOperation);
             },
 
             loadUserList: function() {
@@ -811,17 +910,13 @@
                 const timesTableGroup = document.getElementById('timesTableGroup');
                 if(id === 100) {
                     timesTableGroup.classList.remove('hidden');
-                    // Don't start immediately, wait for table selection
-                    if(this.selectedTables.length === 0) {
-                        alert('Please select at least one times table!');
-                        return;
-                    }
+                    // Don't start - wait for Go button
+                    return;
                 } else {
                     timesTableGroup.classList.add('hidden');
+                    this.state.year = id;
+                    this.start(id);
                 }
-                
-                this.state.year = id;
-                this.start(id);
             },
 
             selectCount: function(count) {
@@ -891,6 +986,12 @@
                 this.state.questionNum = 0;
                 this.state.problemTimes = [];
                 this.state.totalAttempts = 0;
+                this.usedQuestions.clear(); // Clear used questions at start
+                
+                // Set count based on mode
+                if(id === 100) {
+                    this.state.count = this.timesTableCount;
+                }
                 
                 this.switch('game');
                 this.startTimer();
@@ -905,59 +1006,90 @@
                 this.state.questionStartTime = Date.now();
                 this.state.currentAttempts = 0;
                 
-                // Generate Logic
+                // Generate Logic with duplicate prevention
                 const rand = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
-                let n1, n2, op, ans;
+                let n1, n2, op, ans, questionKey;
                 let y = this.state.year;
-                let r = Math.random();
+                let attempts = 0;
+                const maxAttempts = 100;
 
-                if(y===0) { n1=rand(1,5); n2=rand(1,4); op='+'; }
-                else if(y===1) { op=r>0.5?'+':'-'; n1=rand(5,20); n2=rand(1,9); }
-                else if(y===2) {
-                    if(r>0.6){ n1=[2,5,10][rand(0,2)]; n2=rand(1,12); op='x'; }
-                    else { op=r>0.8?'-':'+'; n1=rand(10,50); n2=rand(2,20); }
-                }
-                else if(y===3) {
-                    if(r>0.5) {
-                        // Times tables for 3, 4, 8
-                        n1=[3,4,8][rand(0,2)]; n2=rand(1,12); op='x'; 
-                    } else {
-                        // 3-digit addition and subtraction (50/50)
-                        if(r > 0.25) {
-                            // Subtraction
-                            op = '-';
-                            n1 = rand(200, 800);
-                            n2 = rand(10, 150);
-                            if(n2 > n1) [n1, n2] = [n2, n1];
+                // Keep trying until we get a unique question
+                do {
+                    attempts++;
+                    let r = Math.random();
+
+                    if(y===0) { n1=rand(1,5); n2=rand(1,4); op='+'; }
+                    else if(y===1) { op=r>0.5?'+':'-'; n1=rand(5,20); n2=rand(1,9); }
+                    else if(y===2) {
+                        if(r>0.6){ n1=[2,5,10][rand(0,2)]; n2=rand(1,12); op='x'; }
+                        else { op=r>0.8?'-':'+'; n1=rand(10,50); n2=rand(2,20); }
+                    }
+                    else if(y===3) {
+                        if(r>0.5) {
+                            n1=[3,4,8][rand(0,2)]; n2=rand(1,12); op='x'; 
                         } else {
-                            // Addition
-                            op = '+';
-                            n1 = rand(100, 500);
-                            n2 = rand(10, 300);
+                            if(r > 0.25) {
+                                op = '-';
+                                n1 = rand(200, 800);
+                                n2 = rand(10, 150);
+                                if(n2 > n1) [n1, n2] = [n2, n1];
+                            } else {
+                                op = '+';
+                                n1 = rand(100, 500);
+                                n2 = rand(10, 300);
+                            }
                         }
                     }
-                }
-                else if(y===4) { n1=rand(2,12); n2=rand(2,12); op='x'; }
-                else if(y===100) { 
-                    // Times Tables mode - use selected tables
-                    const table = this.selectedTables[Math.floor(Math.random() * this.selectedTables.length)];
-                    n1 = table;
-                    n2 = rand(1, 12);
-                    op = 'x';
-                }
-                else {
-                    if(r>0.6){ n1=rand(100,900); n2=rand(50,400); op=r>0.8?'-':'+'; }
-                    else { n1=rand(3,15); n2=rand(10,50); op='x'; }
-                }
+                    else if(y===4) { n1=rand(2,12); n2=rand(2,12); op='x'; }
+                    else if(y===100) { 
+                        const table = this.selectedTables[Math.floor(Math.random() * this.selectedTables.length)];
+                        const multiplier = rand(1, 12);
+                        
+                        if(this.timesTableOperation === 'multiplication') {
+                            n1 = table;
+                            n2 = multiplier;
+                            op = 'x';
+                        } else if(this.timesTableOperation === 'division') {
+                            n1 = table * multiplier;
+                            n2 = table;
+                            op = '÷';
+                        } else { // both
+                            if(Math.random() > 0.5) {
+                                n1 = table;
+                                n2 = multiplier;
+                                op = 'x';
+                            } else {
+                                n1 = table * multiplier;
+                                n2 = table;
+                                op = '÷';
+                            }
+                        }
+                    }
+                    else {
+                        if(r>0.6){ n1=rand(100,900); n2=rand(50,400); op=r>0.8?'-':'+'; }
+                        else { n1=rand(3,15); n2=rand(10,50); op='x'; }
+                    }
 
-                if(op==='-' && n1<n2) [n1,n2]=[n2,n1];
+                    if(op==='-' && n1<n2) [n1,n2]=[n2,n1];
+                    
+                    questionKey = `${n1}${op}${n2}`;
+                    
+                    if(attempts >= maxAttempts) {
+                        console.warn('Could not generate unique question, allowing duplicate');
+                        break;
+                    }
+                } while(this.usedQuestions.has(questionKey));
+
+                this.usedQuestions.add(questionKey);
+
                 if(op==='+') ans = n1+n2;
                 if(op==='-') ans = n1-n2;
                 if(op==='x') ans = n1*n2;
+                if(op==='÷') ans = n1/n2;
 
-                this.state.q = { text: `${n1} ${op==='x'?'×':op} ${n2} = ?`, ans: ans, problem: `${n1} ${op==='x'?'×':op} ${n2}` };
+                const opDisplay = op==='x'?'×':op==='÷'?'÷':op;
+                this.state.q = { text: `${n1} ${opDisplay} ${n2} = ?`, ans: ans, problem: `${n1} ${opDisplay} ${n2}` };
                 
-                // Update UI
                 document.getElementById('lbl-progress').innerText = `Q ${this.state.questionNum}/${this.state.count}`;
                 document.getElementById('q-text').innerText = this.state.q.text;
                 document.getElementById('feedback').innerText = "";
@@ -1080,6 +1212,7 @@
                 this.state.questionNum = 0;
                 this.state.problemTimes = [];
                 this.state.totalAttempts = 0;
+                this.usedQuestions.clear(); // Clear used questions
                 document.getElementById('lbl-time').innerText = '0s';
                 this.updateUserStats();
                 this.switch('setup');
