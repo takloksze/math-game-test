@@ -45,7 +45,77 @@
         }
         .screen.active { display: flex; }
 
-        /* --- 1. SETUP SCREEN --- */
+        /* --- USER SELECT SCREEN --- */
+        .user-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 4px solid var(--primary);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .user-btn {
+            background: linear-gradient(135deg, #f0f0ff, #e6e6ff);
+            border: 3px solid var(--primary);
+            color: var(--primary);
+            padding: 18px 20px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .user-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3); }
+
+        .user-stats { font-size: 0.9rem; color: #666; font-weight: normal; }
+
+        .new-user-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 3px solid var(--accent);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- SETUP SCREEN --- */
         .setup-container {
             flex: 1;
             display: flex;
@@ -67,6 +137,29 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .user-name {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .btn-logout {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
         h1 { color: var(--primary); margin: 0 0 15px 0; font-size: 1.8rem; }
         
         .year-grid {
@@ -80,12 +173,14 @@
             background: #f8f9fa;
             border: 2px solid var(--primary);
             color: var(--primary);
-            padding: 15px 5px;
+            padding: 20px 10px;
             border-radius: 12px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
         }
+        .btn-year:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3); }
         .btn-year:active { background: var(--primary); color: white; }
 
         .option-group {
@@ -112,18 +207,33 @@
             background: #f8f9fa;
             border: 2px solid var(--accent);
             color: var(--accent);
-            padding: 12px 5px;
+            padding: 15px 10px;
             border-radius: 10px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
         }
+        .btn-count:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3); }
         .btn-count.selected { background: var(--accent); color: white; }
 
+        .stats-summary {
+            background: linear-gradient(135deg, #f0f0ff, #e6e6ff);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
 
-        /* --- 2. GAME SCREEN (Split Layout) --- */
-        
-        /* Top Section: Header + Question */
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        /* --- GAME SCREEN --- */
         .game-top {
             flex: 0 0 auto;
             display: flex;
@@ -140,7 +250,7 @@
 
         .btn-quit {
             background: var(--secondary); color: white; border: none;
-            padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
             cursor: pointer;
         }
 
@@ -178,7 +288,6 @@
         .feedback { height: 20px; font-weight: bold; font-size: 1.1rem; margin-top: 5px; }
         .correct { color: #00c851; } .wrong { color: var(--secondary); }
 
-        /* Bottom Section: Keypad */
         .game-bottom {
             flex: 1;
             background: #f4f4f4;
@@ -201,6 +310,7 @@
             z-index: 101;
             max-height: 320px;
             margin: auto;
+            max-width: 400px;
         }
 
         .key {
@@ -218,7 +328,7 @@
             position: relative;
             z-index: 102;
             pointer-events: auto;
-            min-height: 65px;
+            min-height: 70px;
         }
         .key:active { background: #e0e0e0; transform: translateY(2px); box-shadow: none; }
         
@@ -316,13 +426,14 @@
         @media (min-width: 600px) {
             .math-text { font-size: 3.5rem; }
             .game-bottom { max-height: 450px; border-radius: 30px; margin: 0 20px 20px 20px; }
+            .numpad { max-width: 450px; }
         }
 
         @media (max-width: 400px) {
             .math-text { font-size: 2rem; }
             .input-display { font-size: 1.6rem; height: 50px; }
-            .key { font-size: 1.5rem; min-height: 55px; }
-            .numpad { max-height: 280px; gap: 8px; }
+            .key { font-size: 1.5rem; min-height: 60px; }
+            .numpad { max-height: 280px; gap: 8px; max-width: 320px; }
         }
     </style>
 </head>
@@ -330,9 +441,31 @@
 
     <div class="stars"></div>
 
-    <div id="setup" class="screen active">
+    <!-- User Select Screen -->
+    <div id="userSelect" class="screen active">
+        <div class="user-container">
+            <div class="user-card">
+                <h1>👋 Welcome!</h1>
+                <p>Select your name or create a new one:</p>
+                
+                <div class="user-list" id="userList"></div>
+                
+                <input type="text" class="new-user-input" id="newUserInput" placeholder="Enter your name...">
+                <button class="btn-primary" onclick="window.game.createUser()">➕ Create New User</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="setup" class="screen">
         <div class="setup-container">
             <div class="card">
+                <div class="user-header">
+                    <span class="user-name">👤 <span id="currentUser"></span></span>
+                    <button class="btn-logout" onclick="window.game.logout()">🔙 Change User</button>
+                </div>
+                
+                <div class="stats-summary" id="userStats"></div>
+                
                 <h1>🚀 Maths Academy</h1>
                 <p>Select Year Group:</p>
                 <div class="year-grid" id="menu"></div>
@@ -419,6 +552,7 @@
                 { id: 6, label: "Year 6", desc: "Expert" }
             ],
             counts: [5, 10, 15, 20],
+            currentUser: null,
             state: { 
                 year: 0, 
                 count: 10, 
@@ -435,8 +569,68 @@
             },
             audioCtx: null,
 
-            // --- INIT ---
+            // --- STORAGE FUNCTIONS ---
+            getUsers: function() {
+                const data = localStorage.getItem('mathAstroUsers');
+                return data ? JSON.parse(data) : {};
+            },
+
+            saveUsers: function(users) {
+                localStorage.setItem('mathAstroUsers', JSON.stringify(users));
+            },
+
+            getUserData: function(username) {
+                const users = this.getUsers();
+                if(!users[username]) {
+                    users[username] = {
+                        created: new Date().toISOString(),
+                        totalQuestions: 0,
+                        totalSessions: 0,
+                        dailyStats: {},
+                        history: []
+                    };
+                    this.saveUsers(users);
+                }
+                return users[username];
+            },
+
+            saveSession: function(sessionData) {
+                const users = this.getUsers();
+                const userData = users[this.currentUser];
+                
+                const today = new Date().toISOString().split('T')[0];
+                
+                if(!userData.dailyStats[today]) {
+                    userData.dailyStats[today] = { questions: 0, sessions: 0 };
+                }
+                
+                userData.dailyStats[today].questions += sessionData.questionCount;
+                userData.dailyStats[today].sessions += 1;
+                userData.totalQuestions += sessionData.questionCount;
+                userData.totalSessions += 1;
+                
+                userData.history.push({
+                    date: new Date().toISOString(),
+                    year: this.years[sessionData.year].label,
+                    questionCount: sessionData.questionCount,
+                    totalTime: sessionData.totalTime,
+                    avgTime: sessionData.avgTime,
+                    totalAttempts: sessionData.totalAttempts,
+                    problems: sessionData.problemTimes
+                });
+                
+                // Keep only last 100 sessions
+                if(userData.history.length > 100) {
+                    userData.history = userData.history.slice(-100);
+                }
+                
+                this.saveUsers(users);
+            },
+
+            // --- USER INTERFACE ---
             init: function() {
+                this.loadUserList();
+                
                 const menu = document.getElementById('menu');
                 this.years.forEach(y => {
                     let btn = document.createElement('button');
@@ -455,6 +649,80 @@
                     btn.onclick = () => this.selectCount(c);
                     countMenu.appendChild(btn);
                 });
+            },
+
+            loadUserList: function() {
+                const users = this.getUsers();
+                const userList = document.getElementById('userList');
+                userList.innerHTML = '';
+                
+                Object.keys(users).sort().forEach(username => {
+                    const userData = users[username];
+                    const btn = document.createElement('button');
+                    btn.className = 'user-btn';
+                    btn.onclick = () => this.selectUser(username);
+                    
+                    btn.innerHTML = `
+                        <span><strong>${username}</strong></span>
+                        <span class="user-stats">${userData.totalQuestions} questions · ${userData.totalSessions} sessions</span>
+                    `;
+                    userList.appendChild(btn);
+                });
+            },
+
+            createUser: function() {
+                const input = document.getElementById('newUserInput');
+                const username = input.value.trim();
+                
+                if(!username) {
+                    alert('Please enter a name!');
+                    return;
+                }
+                
+                const users = this.getUsers();
+                if(users[username]) {
+                    alert('This name already exists!');
+                    return;
+                }
+                
+                this.getUserData(username); // Creates the user
+                this.selectUser(username);
+                input.value = '';
+            },
+
+            selectUser: function(username) {
+                this.currentUser = username;
+                document.getElementById('currentUser').textContent = username;
+                this.updateUserStats();
+                this.switch('setup');
+            },
+
+            updateUserStats: function() {
+                const userData = this.getUserData(this.currentUser);
+                const today = new Date().toISOString().split('T')[0];
+                const todayStats = userData.dailyStats[today] || { questions: 0, sessions: 0 };
+                
+                const statsDiv = document.getElementById('userStats');
+                statsDiv.innerHTML = `
+                    <div class="stat-item">
+                        <span><strong>📊 Total Questions:</strong></span>
+                        <span>${userData.totalQuestions}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span><strong>🎮 Total Sessions:</strong></span>
+                        <span>${userData.totalSessions}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span><strong>📅 Today:</strong></span>
+                        <span>${todayStats.questions} questions · ${todayStats.sessions} sessions</span>
+                    </div>
+                `;
+            },
+
+            logout: function() {
+                this.currentUser = null;
+                this.loadUserList();
+                this.switch('userSelect');
             },
 
             selectYear: function(id) {
@@ -646,6 +914,16 @@
                 const totalTime = this.state.problemTimes.reduce((sum, p) => sum + p.time, 0);
                 const avgTime = totalTime / this.state.problemTimes.length;
                 
+                // Save session to storage
+                this.saveSession({
+                    year: this.state.year,
+                    questionCount: this.state.count,
+                    totalTime: totalTime,
+                    avgTime: avgTime,
+                    totalAttempts: this.state.totalAttempts,
+                    problemTimes: this.state.problemTimes
+                });
+                
                 document.getElementById('total-time').innerText = this.formatTime(totalTime);
                 document.getElementById('avg-time').innerText = avgTime.toFixed(1) + 's';
                 document.getElementById('total-attempts').innerText = this.state.totalAttempts;
@@ -679,7 +957,7 @@
             },
 
             quit: function() {
-                if(confirm("Exit Mission?")) {
+                if(confirm("Exit Mission? Progress will not be saved.")) {
                     this.stopTimer();
                     this.showSetup();
                 }
@@ -691,6 +969,7 @@
                 this.state.problemTimes = [];
                 this.state.totalAttempts = 0;
                 document.getElementById('lbl-time').innerText = '0s';
+                this.updateUserStats();
                 this.switch('setup');
             },
 
