@@ -19,8 +19,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             margin: 0;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
@@ -39,7 +38,7 @@
         .screen {
             display: none;
             flex-direction: column;
-            height: 100%;
+            min-height: 100vh;
             width: 100%;
             position: relative;
         }
@@ -55,6 +54,7 @@
             max-width: 600px;
             margin: 0 auto;
             width: 100%;
+            min-height: 100vh;
         }
 
         .user-card {
@@ -125,7 +125,7 @@
             max-width: 600px;
             margin: 0 auto;
             width: 100%;
-            overflow-y: auto;
+            min-height: 100vh;
         }
 
         .card {
@@ -173,9 +173,9 @@
             background: #f8f9fa;
             border: 2px solid var(--primary);
             color: var(--primary);
-            padding: 20px 10px;
+            padding: 18px 28px;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
@@ -197,6 +197,40 @@
             font-size: 1.1rem;
         }
 
+        .times-table-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .times-table-btn {
+            padding: 15px;
+            border: 3px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 15px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 700;
+            box-shadow: 0 3px 10px rgba(108, 99, 255, 0.2);
+        }
+
+        .times-table-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(108, 99, 255, 0.4);
+        }
+
+        .times-table-btn.selected {
+            background: linear-gradient(135deg, #6C63FF, #5a52d5);
+            color: white;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         .count-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -207,9 +241,9 @@
             background: #f8f9fa;
             border: 2px solid var(--accent);
             color: var(--accent);
-            padding: 15px 10px;
+            padding: 18px 28px;
             border-radius: 10px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
@@ -241,6 +275,11 @@
             padding: 10px 15px;
             position: relative;
             z-index: 1;
+        }
+
+        #game {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .header {
@@ -308,19 +347,19 @@
             height: 100%;
             position: relative;
             z-index: 101;
-            max-height: 320px;
+            max-height: 400px;
             margin: auto;
-            max-width: 400px;
+            max-width: 280px;
         }
 
         .key {
             background: white;
             border: none;
-            border-radius: 15px;
-            font-size: 1.8rem;
+            border-radius: 12px;
+            font-size: 1.6rem;
             font-weight: bold;
             color: #333;
-            box-shadow: 0 4px 0 #ddd;
+            box-shadow: 0 3px 8px rgba(255, 105, 180, 0.2);
             cursor: pointer;
             touch-action: manipulation;
             user-select: none;
@@ -328,9 +367,14 @@
             position: relative;
             z-index: 102;
             pointer-events: auto;
-            min-height: 70px;
+            min-height: 55px;
+            max-height: 55px;
+            padding: 15px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .key:active { background: #e0e0e0; transform: translateY(2px); box-shadow: none; }
+        .key:active { background: #e0e0e0; transform: translateY(1px) scale(0.98); box-shadow: 0 1px 4px rgba(255, 105, 180, 0.2); }
         
         .key-del { background: #ffbdc9; color: #c21d42; font-size: 1.2rem; }
         .key-go { background: var(--primary); color: white; box-shadow: 0 4px 0 #4a43b8; font-size: 1.2rem; }
@@ -344,7 +388,12 @@
             max-width: 600px;
             margin: 0 auto;
             width: 100%;
+            min-height: 100vh;
+        }
+
+        #results {
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .results-card {
@@ -434,6 +483,8 @@
             .input-display { font-size: 1.6rem; height: 50px; }
             .key { font-size: 1.5rem; min-height: 60px; }
             .numpad { max-height: 280px; gap: 8px; max-width: 320px; }
+            .btn-year { padding: 15px 20px; font-size: 1.1rem; }
+            .btn-count { padding: 15px 20px; font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -473,6 +524,11 @@
                 <div class="option-group">
                     <label>How many questions?</label>
                     <div class="count-grid" id="countMenu"></div>
+                </div>
+
+                <div class="option-group hidden" id="timesTableGroup">
+                    <label>🎪 Pick Your Times Tables! (Choose one or more) 🎪</label>
+                    <div class="times-table-grid" id="timesTableGrid"></div>
                 </div>
             </div>
         </div>
@@ -549,10 +605,12 @@
                 { id: 3, label: "Year 3", desc: "x3,x4,x8 & 3-Digit" },
                 { id: 4, label: "Year 4", desc: "Tables up to 12" },
                 { id: 5, label: "Year 5", desc: "Big Mix" },
-                { id: 6, label: "Year 6", desc: "Expert" }
+                { id: 6, label: "Year 6", desc: "Expert" },
+                { id: 100, label: "Times Tables", desc: "Practice multiplication" }
             ],
             counts: [5, 10, 15, 20],
             currentUser: null,
+            selectedTables: [],
             state: { 
                 year: 0, 
                 count: 10, 
@@ -649,6 +707,29 @@
                     btn.onclick = () => this.selectCount(c);
                     countMenu.appendChild(btn);
                 });
+
+                // Create times table buttons
+                const timesTableGrid = document.getElementById('timesTableGrid');
+                for (let i = 1; i <= 12; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'times-table-btn';
+                    btn.textContent = i;
+                    btn.dataset.table = i;
+                    btn.addEventListener('click', () => this.toggleTimesTable(i, btn));
+                    timesTableGrid.appendChild(btn);
+                }
+            },
+
+            toggleTimesTable: function(num, btn) {
+                const index = this.selectedTables.indexOf(num);
+                if (index > -1) {
+                    this.selectedTables.splice(index, 1);
+                    btn.classList.remove('selected');
+                } else {
+                    this.selectedTables.push(num);
+                    btn.classList.add('selected');
+                }
+                this.play('select');
             },
 
             loadUserList: function() {
@@ -726,6 +807,19 @@
             },
 
             selectYear: function(id) {
+                // Show/hide times table selection for custom mode
+                const timesTableGroup = document.getElementById('timesTableGroup');
+                if(id === 100) {
+                    timesTableGroup.classList.remove('hidden');
+                    // Don't start immediately, wait for table selection
+                    if(this.selectedTables.length === 0) {
+                        alert('Please select at least one times table!');
+                        return;
+                    }
+                } else {
+                    timesTableGroup.classList.add('hidden');
+                }
+                
                 this.state.year = id;
                 this.start(id);
             },
@@ -825,14 +919,32 @@
                 }
                 else if(y===3) {
                     if(r>0.5) {
+                        // Times tables for 3, 4, 8
                         n1=[3,4,8][rand(0,2)]; n2=rand(1,12); op='x'; 
                     } else {
-                        op=r>0.7?'-':'+';
-                        if(op==='+'){ n1=rand(100,500); n2=rand(10,300); }
-                        else { n1=rand(200,800); n2=rand(10,150); }
+                        // 3-digit addition and subtraction (50/50)
+                        if(r > 0.25) {
+                            // Subtraction
+                            op = '-';
+                            n1 = rand(200, 800);
+                            n2 = rand(10, 150);
+                            if(n2 > n1) [n1, n2] = [n2, n1];
+                        } else {
+                            // Addition
+                            op = '+';
+                            n1 = rand(100, 500);
+                            n2 = rand(10, 300);
+                        }
                     }
                 }
                 else if(y===4) { n1=rand(2,12); n2=rand(2,12); op='x'; }
+                else if(y===100) { 
+                    // Times Tables mode - use selected tables
+                    const table = this.selectedTables[Math.floor(Math.random() * this.selectedTables.length)];
+                    n1 = table;
+                    n2 = rand(1, 12);
+                    op = 'x';
+                }
                 else {
                     if(r>0.6){ n1=rand(100,900); n2=rand(50,400); op=r>0.8?'-':'+'; }
                     else { n1=rand(3,15); n2=rand(10,50); op='x'; }
