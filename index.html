@@ -93,9 +93,9 @@
     margin-top: 20px;
   }
   .numpad-btn {
-    width: 80px;
-    height: 80px;
-    font-size: 32px;
+    width: 160px;
+    height: 120px;
+    font-size: 64px;
     margin: 6px;
     border-radius: 10px;
     cursor: pointer;
@@ -504,6 +504,7 @@
         }
 
         .key {
+            width: 120px;
             background: white;
             border: none;
             border-radius: 12px;
@@ -518,8 +519,8 @@
             position: relative;
             z-index: 102;
             pointer-events: auto;
-            min-height: 55px;
-            max-height: 55px;
+            min-height: 80px;
+            max-height: 100px;
             padding: 15px 10px;
             display: flex;
             align-items: center;
@@ -1336,18 +1337,7 @@
         window.onload = function() { window.game.init(); };
     </script>
 </body>
-</html></p>
-    <p>Add as much content as you want here.</p>
-
-    <!-- Number pad buttons with correct sizing -->
-    <div id="numpad">
-      <button class="numpad-btn">1</button>
-      <button class="numpad-btn">2</button>
-      <button class="numpad-btn">3</button>
-      <button class="numpad-btn">4</button>
-      <button class="numpad-btn">5</button>
-    </div>
-  </div>
+</html>
   <div id="drawingContainer">
     <canvas id="drawingCanvas"></canvas>
     <div id="controls">
