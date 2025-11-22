@@ -9,41 +9,38 @@
             --primary: #6C63FF;
             --secondary: #FF6584;
             --accent: #00E5FF;
-            --bg-dark: #1a1a2e;
-            --panel-bg: rgba(255, 255, 255, 0.95);
+            --dark-bg: #1a1a2e;
+            --card-bg: #ffffff;
         }
 
-        /* RESET & BASICS */
+        /* 1. RESET & LAYOUT */
         * { box-sizing: border-box; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             margin: 0;
-            height: 100vh; /* Full viewport height */
+            height: 100vh;
+            overflow: hidden; /* No scrolling */
             display: flex;
             justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            color: #333;
         }
 
-        /* BACKGROUND - Important: pointer-events none so clicks go through to buttons */
         .stars {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
-            pointer-events: none; 
+            pointer-events: none;
             background-image: 
                 radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
                 radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px);
             background-size: 550px 550px, 350px 350px;
         }
 
-        /* CONTAINER */
+        /* 2. APP CONTAINER - MOBILE OPTIMIZED */
         .app-container {
             position: relative;
-            z-index: 1; /* Above stars */
+            z-index: 1;
             width: 100%;
-            max-width: 600px;
+            max-width: 500px; /* Constrain width on tablets */
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -60,24 +57,25 @@
         .screen.active { display: flex; }
 
         /* START SCREEN */
-        .panel {
-            background: var(--panel-bg);
+        .menu-panel {
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 20px;
             text-align: center;
             border: 4px solid var(--primary);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin: auto 0;
+            margin: auto; /* Center in screen */
+            width: 90%;
+            max-height: 80vh;
             overflow-y: auto;
-            max-height: 90vh;
         }
-
-        h1 { color: var(--primary); margin: 5px 0 15px 0; font-size: 1.8rem; }
-
-        .year-grid {
+        
+        h1 { color: var(--primary); margin: 10px 0; font-size: 1.8rem; }
+        
+        .year-btn-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
+            margin-top: 15px;
         }
 
         .btn-year {
@@ -92,10 +90,10 @@
         }
         .btn-year:active { background: var(--primary); color: white; transform: scale(0.95); }
 
-        /* GAME SCREEN */
+        /* GAME LAYOUT - FIXING THE GAP */
         .game-header {
             display: flex; justify-content: space-between; align-items: center;
-            color: white; font-weight: bold; margin-bottom: 10px; font-size: 1.1rem;
+            color: white; font-weight: bold; height: 50px; flex-shrink: 0;
         }
 
         .btn-quit {
@@ -103,71 +101,70 @@
             padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer;
         }
 
-        .problem-area {
-            background: var(--panel-bg);
+        /* Wrapper to center content vertically */
+        .game-content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* This centers everything vertically */
+            gap: 15px; /* Consistent small gap between question and keys */
+            padding-bottom: 20px;
+        }
+
+        /* QUESTION CARD */
+        .question-card {
+            background: white;
             border-radius: 20px;
             padding: 20px;
             text-align: center;
-            flex-grow: 0;
-            margin-bottom: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        .question-text { font-size: 2.8rem; color: var(--bg-dark); font-weight: bold; margin-bottom: 10px; }
+        .question-text { font-size: 3rem; color: #333; font-weight: bold; margin-bottom: 10px; }
         
-        /* THE DISPLAY (Not an input) */
         .answer-display {
-            background: #fff;
-            border: 3px solid #ccc;
-            border-radius: 15px;
-            height: 70px;
+            background: #f4f4f4;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
             font-weight: bold;
             color: var(--primary);
-            margin-bottom: 10px;
         }
-        .answer-display.active { border-color: var(--accent); }
+        .answer-display.active { border-color: var(--accent); background: white; }
 
-        .feedback { min-height: 25px; font-weight: bold; font-size: 1.2rem; }
-        .feedback.correct { color: green; }
-        .feedback.wrong { color: var(--secondary); }
+        .feedback-msg { height: 25px; margin-top: 10px; font-weight: bold; font-size: 1.2rem; }
+        .correct { color: #00C851; }
+        .wrong { color: var(--secondary); }
 
-        /* NUMPAD - Logic copied from your file */
-        .numpad-container {
-            flex-grow: 1;
-            display: flex;
-            align-items: flex-end; /* Push to bottom */
-            padding-bottom: 10px;
-        }
-
+        /* NUMPAD - BIGGER BUTTONS */
         .numpad {
-            width: 100%;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
         }
 
-        .numpad-btn {
+        .key-btn {
             background: white;
             border: none;
             border-radius: 15px;
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: bold;
             color: #333;
             box-shadow: 0 4px 0 #bbb;
             cursor: pointer;
-            padding: 15px 0;
-            min-height: 65px;
+            height: 65px; /* Fixed height for touch targets */
+            transition: transform 0.1s;
         }
         
-        .numpad-btn:active { transform: translateY(4px); box-shadow: none; background: #eee; }
-        .numpad-btn.special { background: var(--secondary); color: white; box-shadow: 0 4px 0 #c23a54; }
-        .numpad-btn.enter { background: var(--primary); color: white; box-shadow: 0 4px 0 #4a43b8; }
+        .key-btn:active { transform: translateY(4px); box-shadow: none; background: #eee; }
+        .key-btn.special { background: var(--secondary); color: white; box-shadow: 0 4px 0 #c23a54; }
+        .key-btn.enter { background: var(--primary); color: white; box-shadow: 0 4px 0 #4a43b8; }
 
-        /* RESULTS SCREEN */
+        /* RESULTS */
         .btn-restart {
             width: 100%; padding: 15px;
             background: var(--primary); color: white;
@@ -175,351 +172,300 @@
             font-size: 1.3rem; margin-top: 20px; cursor: pointer;
         }
 
-        /* ANIMATIONS */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .shake { animation: shake 0.4s ease-in-out; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
 
+        /* Tablet/Desktop Tweaks */
+        @media (min-height: 800px) {
+            .question-text { font-size: 4rem; margin-bottom: 20px; }
+            .key-btn { height: 80px; }
+            .game-content-wrapper { gap: 30px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="stars"></div>
+<div class="stars"></div>
 
-    <div class="app-container">
-        
-        <div id="screen-setup" class="screen active">
-            <div class="panel">
-                <h1>🚀 Astro Maths</h1>
-                <p>Choose your mission:</p>
-                <div class="year-grid" id="year-buttons">
-                    </div>
-            </div>
-        </div>
-
-        <div id="screen-game" class="screen">
-            <div class="game-header">
-                <button class="btn-quit" id="btn-quit">❌ Quit</button>
-                <span id="label-year">Year 3</span>
-                <span>⭐ <span id="label-score">0</span></span>
-            </div>
-
-            <div class="problem-area">
-                <div class="question-text" id="question">?</div>
-                <div class="answer-display" id="answer-display"></div>
-                <div class="feedback" id="feedback"></div>
-            </div>
-
-            <div class="numpad-container">
-                <div class="numpad">
-                    <button class="numpad-btn" data-number="1">1</button>
-                    <button class="numpad-btn" data-number="2">2</button>
-                    <button class="numpad-btn" data-number="3">3</button>
-                    <button class="numpad-btn" data-number="4">4</button>
-                    <button class="numpad-btn" data-number="5">5</button>
-                    <button class="numpad-btn" data-number="6">6</button>
-                    <button class="numpad-btn" data-number="7">7</button>
-                    <button class="numpad-btn" data-number="8">8</button>
-                    <button class="numpad-btn" data-number="9">9</button>
-                    <button class="numpad-btn special" id="btn-del">DEL</button>
-                    <button class="numpad-btn" data-number="0">0</button>
-                    <button class="numpad-btn enter" id="btn-enter">GO</button>
+<div class="app-container">
+    
+    <div id="screen-setup" class="screen active">
+        <div class="menu-panel">
+            <h1>🚀 Astro Maths</h1>
+            <p>Select your Mission:</p>
+            <div class="year-btn-grid" id="year-menu">
                 </div>
-            </div>
         </div>
-
-        <div id="screen-results" class="screen">
-            <div class="panel">
-                <h1>Mission Complete! 🏁</h1>
-                <p>Total Score: <strong id="final-score" style="font-size:1.5rem">0</strong></p>
-                <p>High Score: <strong id="final-high-score">0</strong></p>
-                <button class="btn-restart" id="btn-restart">Play Again 🔄</button>
-            </div>
-        </div>
-
     </div>
 
-    <script>
-        // --- DATA & STATE ---
-        const years = [
-            { id: 0, label: "Reception", desc: "Add to 10" },
-            { id: 1, label: "Year 1", desc: "Add/Sub to 20" },
-            { id: 2, label: "Year 2", desc: "Tables 2,5,10" },
-            { id: 3, label: "Year 3", desc: "x3,x4,x8 & 3-Digit" },
-            { id: 4, label: "Year 4", desc: "Tables up to 12" },
-            { id: 5, label: "Year 5", desc: "Big Mix" },
-            { id: 6, label: "Year 6", desc: "Expert" }
-        ];
+    <div id="screen-game" class="screen">
+        <div class="game-header">
+            <button class="btn-quit" onclick="quitGame()">❌ Quit</button>
+            <span id="lbl-year">Year 3</span>
+            <span>⭐ <span id="lbl-score">0</span></span>
+        </div>
 
-        let state = {
-            active: false,
-            year: 0,
-            score: 0,
-            currentAnswer: "", // STRING based state (Like your file)
-            problem: { text: "", answer: 0 },
-            questionCount: 0
-        };
+        <div class="game-content-wrapper">
+            <div class="question-card">
+                <div class="question-text" id="question">?</div>
+                <div class="answer-display" id="display"></div>
+                <div class="feedback-msg" id="feedback"></div>
+            </div>
 
-        const MAX_QUESTIONS = 10;
+            <div class="numpad">
+                <button class="key-btn" onclick="input('1')">1</button>
+                <button class="key-btn" onclick="input('2')">2</button>
+                <button class="key-btn" onclick="input('3')">3</button>
+                <button class="key-btn" onclick="input('4')">4</button>
+                <button class="key-btn" onclick="input('5')">5</button>
+                <button class="key-btn" onclick="input('6')">6</button>
+                <button class="key-btn" onclick="input('7')">7</button>
+                <button class="key-btn" onclick="input('8')">8</button>
+                <button class="key-btn" onclick="input('9')">9</button>
+                <button class="key-btn special" onclick="input('DEL')">DEL</button>
+                <button class="key-btn" onclick="input('0')">0</button>
+                <button class="key-btn enter" onclick="checkAnswer()">GO</button>
+            </div>
+        </div>
+    </div>
 
-        // --- DOM ELEMENTS ---
-        const screens = {
-            setup: document.getElementById('screen-setup'),
-            game: document.getElementById('screen-game'),
-            results: document.getElementById('screen-results')
-        };
-        const els = {
-            question: document.getElementById('question'),
-            display: document.getElementById('answer-display'),
-            feedback: document.getElementById('feedback'),
-            score: document.getElementById('label-score'),
-            yearLabel: document.getElementById('label-year'),
-            yearBtns: document.getElementById('year-buttons')
-        };
+    <div id="screen-result" class="screen">
+        <div class="menu-panel">
+            <h1>Mission Complete!</h1>
+            <p>Score: <strong id="res-score" style="font-size:1.5rem">0</strong></p>
+            <p>High Score: <strong id="res-high">0</strong></p>
+            <button class="btn-restart" onclick="showSetup()">Play Again 🔄</button>
+        </div>
+    </div>
 
-        // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            initMenu();
-            attachListeners();
-        });
+</div>
 
-        function initMenu() {
-            els.yearBtns.innerHTML = '';
-            years.forEach(y => {
-                const btn = document.createElement('button');
-                btn.className = 'btn-year';
-                btn.innerHTML = `${y.label}<br><small>${y.desc}</small>`;
-                btn.addEventListener('click', () => startGame(y.id));
-                els.yearBtns.appendChild(btn);
-            });
+<script>
+    // --- 1. CONFIGURATION ---
+    const years = [
+        { id: 0, label: "Reception", desc: "Add to 10" },
+        { id: 1, label: "Year 1", desc: "Add/Sub to 20" },
+        { id: 2, label: "Year 2", desc: "Tables 2,5,10" },
+        { id: 3, label: "Year 3", desc: "x3,x4,x8 & 3-Digit" },
+        { id: 4, label: "Year 4", desc: "Tables up to 12" },
+        { id: 5, label: "Year 5", desc: "Big Mix" },
+        { id: 6, label: "Year 6", desc: "Expert" }
+    ];
+
+    let state = {
+        active: false,
+        year: 0,
+        score: 0,
+        inputStr: "",
+        q: { text: "", ans: 0 },
+        qCount: 0
+    };
+
+    // --- 2. AUDIO SYSTEM (Fixes Sound Issues) ---
+    let audioCtx = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
-
-        // --- GAME LOGIC ---
-        function startGame(yearId) {
-            state.year = yearId;
-            state.score = 0;
-            state.currentAnswer = "";
-            state.questionCount = 0;
-            state.active = true;
-
-            els.score.innerText = "0";
-            els.yearLabel.innerText = years[yearId].label;
-            els.feedback.innerText = "";
-            
-            showScreen('game');
-            nextQuestion();
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
         }
+    }
 
-        function nextQuestion() {
-            if (state.questionCount >= MAX_QUESTIONS) {
-                endGame();
-                return;
-            }
-            
-            state.questionCount++;
-            state.currentAnswer = "";
-            updateDisplay();
-            
-            state.problem = generateMath(state.year);
-            els.question.innerText = state.problem.text;
-            els.feedback.innerText = "";
+    function playSound(type) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'tap') {
+            osc.frequency.setValueAtTime(600, now);
+            gain.gain.setValueAtTime(0.05, now);
+            osc.stop(now + 0.05);
+        } else if (type === 'correct') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(400, now);
+            osc.frequency.linearRampToValueAtTime(800, now + 0.1);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.linearRampToValueAtTime(0, now + 0.3);
+            osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, now);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.linearRampToValueAtTime(0, now + 0.3);
+            osc.stop(now + 0.3);
         }
+        osc.start(now);
+    }
 
-        function generateMath(year) {
-            const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-            let n1, n2, op, text, ans;
-            const r = Math.random();
+    // --- 3. INIT ---
+    // Create Menu Buttons
+    const menuDiv = document.getElementById('year-menu');
+    years.forEach(y => {
+        let btn = document.createElement('button');
+        btn.className = 'btn-year';
+        btn.innerHTML = `${y.label}<br><small>${y.desc}</small>`;
+        btn.onclick = () => startGame(y.id);
+        menuDiv.appendChild(btn);
+    });
 
-            switch(year) {
-                case 0: // Reception
-                    n1 = randInt(1,5); n2 = randInt(1,4); op='+';
-                    break;
-                case 1: // Year 1
-                    op = r > 0.5 ? '+' : '-';
-                    n1 = randInt(5, 20); n2 = randInt(1, 9);
-                    break;
-                case 2: // Year 2
-                    if(r > 0.6) { // Tables
-                        n1 = [2,5,10][randInt(0,2)]; n2 = randInt(1,12); op='x';
-                    } else { // Add/Sub
-                        op = r > 0.8 ? '-' : '+';
-                        n1 = randInt(10,50); n2 = randInt(2,20);
-                    }
-                    break;
-                case 3: // YEAR 3 SPECIFIC LOGIC
-                    if(r > 0.5) {
-                        // Times Tables 3, 4, 8
-                        n1 = [3,4,8][randInt(0,2)]; n2 = randInt(1,12); op='x';
-                    } else {
-                        // 3-Digit Addition/Subtraction
-                        op = r > 0.75 ? '-' : '+';
-                        if(op === '+') { 
-                            n1 = randInt(100,500); n2 = randInt(10,300); 
-                        } else { 
-                            n1 = randInt(200,800); n2 = randInt(10,150); 
-                        }
-                    }
-                    break;
-                case 4: // Year 4
-                    n1 = randInt(2,12); n2 = randInt(2,12); op='x';
-                    break;
-                default: // Year 5/6
-                    if(r > 0.6) {
-                        n1 = randInt(100,900); n2 = randInt(50,400); op = r > 0.8 ? '-' : '+';
-                    } else {
-                        n1 = randInt(3,15); n2 = randInt(10,50); op='x';
-                    }
-                    break;
-            }
+    // --- 4. GAME LOGIC ---
+    function startGame(id) {
+        // Initialize Audio on first user interaction
+        initAudio();
 
-            // SAFETY: No negatives
-            if (op === '-' && n1 < n2) [n1, n2] = [n2, n1];
+        state.year = id;
+        state.score = 0;
+        state.qCount = 0;
+        state.active = true;
+        
+        document.getElementById('lbl-year').innerText = years[id].label;
+        document.getElementById('lbl-score').innerText = "0";
+        
+        switchScreen('screen-game');
+        nextQuestion();
+    }
 
-            // CALCULATE
-            if(op === '+') ans = n1 + n2;
-            if(op === '-') ans = n1 - n2;
-            if(op === 'x') ans = n1 * n2;
-
-            // FORMAT TEXT
-            const displayOp = op === 'x' ? '×' : op;
-            return { text: `${n1} ${displayOp} ${n2} = ?`, answer: ans };
+    function nextQuestion() {
+        if (state.qCount >= 10) {
+            endGame();
+            return;
         }
+        state.qCount++;
+        state.inputStr = "";
+        state.q = generateMath(state.year);
+        
+        // Reset UI
+        document.getElementById('question').innerText = state.q.text;
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('display').classList.remove('active');
+        updateDisplay();
+        state.active = true; // Unlock input
+    }
 
-        // --- INPUT HANDLING (Based on your file) ---
-        function attachListeners() {
-            // Numbers
-            document.querySelectorAll('.numpad-btn[data-number]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const num = btn.dataset.number;
-                    handleInput(num);
-                });
-            });
+    function generateMath(year) {
+        const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+        let n1, n2, op, text, ans;
+        let r = Math.random();
 
-            // Delete
-            document.getElementById('btn-del').addEventListener('click', () => {
-                state.currentAnswer = state.currentAnswer.slice(0, -1);
-                updateDisplay();
-                playSound('tap');
-            });
-
-            // Enter
-            document.getElementById('btn-enter').addEventListener('click', checkAnswer);
-
-            // Quit
-            document.getElementById('btn-quit').addEventListener('click', () => {
-                if(confirm("Exit mission?")) showScreen('setup');
-            });
-
-            // Restart
-            document.getElementById('btn-restart').addEventListener('click', () => showScreen('setup'));
-
-            // Keyboard support
-            document.addEventListener('keydown', (e) => {
-                if(!state.active) return;
-                if(e.key >= '0' && e.key <= '9') handleInput(e.key);
-                if(e.key === 'Backspace') {
-                    state.currentAnswer = state.currentAnswer.slice(0, -1);
-                    updateDisplay();
+        switch(year) {
+            case 0: n1=randInt(1,5); n2=randInt(1,4); op='+'; break;
+            case 1: op=r>0.5?'+':'-'; n1=randInt(5,20); n2=randInt(1,9); break;
+            case 2: 
+                if(r>0.6){ n1=[2,5,10][randInt(0,2)]; n2=randInt(1,12); op='x'; }
+                else { op=r>0.8?'-':'+'; n1=randInt(10,50); n2=randInt(2,20); }
+                break;
+            case 3: // Year 3
+                if(r>0.5) { n1=[3,4,8][randInt(0,2)]; n2=randInt(1,12); op='x'; }
+                else { 
+                    op=r>0.7?'-':'+'; 
+                    if(op==='+'){ n1=randInt(100,500); n2=randInt(10,300); }
+                    else { n1=randInt(200,800); n2=randInt(10,150); }
                 }
-                if(e.key === 'Enter') checkAnswer();
-            });
+                break;
+            case 4: n1=randInt(2,12); n2=randInt(2,12); op='x'; break;
+            default:
+                if(r>0.6){ n1=randInt(100,900); n2=randInt(50,400); op=r>0.8?'-':'+'; }
+                else { n1=randInt(3,15); n2=randInt(10,50); op='x'; }
         }
 
-        function handleInput(num) {
-            if(!state.active) return;
-            if(state.currentAnswer.length < 6) {
-                state.currentAnswer += num;
-                updateDisplay();
-                playSound('tap');
+        // Safety for negatives
+        if(op==='-' && n1<n2) [n1,n2]=[n2,n1];
+
+        if(op==='+') ans=n1+n2;
+        if(op==='-') ans=n1-n2;
+        if(op==='x') ans=n1*n2;
+
+        return { text: `${n1} ${op==='x'?'×':op} ${n2} = ?`, ans: ans };
+    }
+
+    // --- 5. INPUT HANDLING ---
+    function input(val) {
+        if (!state.active) return;
+        
+        if (val === 'DEL') {
+            state.inputStr = state.inputStr.slice(0, -1);
+        } else {
+            // LIMIT INPUT TO 4 DIGITS
+            if (state.inputStr.length < 4) {
+                state.inputStr += val;
             }
         }
+        playSound('tap');
+        updateDisplay();
+    }
 
-        function updateDisplay() {
-            els.display.innerText = state.currentAnswer;
-            if(state.currentAnswer.length > 0) els.display.classList.add('active');
-            else els.display.classList.remove('active');
-        }
+    function updateDisplay() {
+        let disp = document.getElementById('display');
+        disp.innerText = state.inputStr;
+        if(state.inputStr.length > 0) disp.classList.add('active');
+        else disp.classList.remove('active');
+    }
 
-        function checkAnswer() {
-            if(!state.active || state.currentAnswer === "") return;
-            
-            const userAns = parseInt(state.currentAnswer);
-            
-            if(userAns === state.problem.answer) {
-                // Correct
-                state.score += 10;
-                els.score.innerText = state.score;
-                els.feedback.innerText = "Correct! 🌟";
-                els.feedback.className = "feedback correct";
-                playSound('correct');
-                
-                setTimeout(nextQuestion, 800);
-            } else {
-                // Wrong
-                els.feedback.innerText = "Try again!";
-                els.feedback.className = "feedback wrong";
-                els.display.classList.add('shake');
-                playSound('wrong');
-                state.currentAnswer = "";
-                
-                setTimeout(() => {
-                    els.display.classList.remove('shake');
-                    updateDisplay();
-                }, 400);
-            }
-        }
-
-        function endGame() {
-            state.active = false;
-            
-            // Save High Score
-            const key = `astro_high_${state.year}`;
-            const oldHigh = parseInt(localStorage.getItem(key) || 0);
-            if(state.score > oldHigh) localStorage.setItem(key, state.score);
-
-            document.getElementById('final-score').innerText = state.score;
-            document.getElementById('final-high-score').innerText = Math.max(state.score, oldHigh);
-            
-            showScreen('results');
+    function checkAnswer() {
+        if (!state.active || state.inputStr === "") return;
+        
+        let userAns = parseInt(state.inputStr);
+        let fb = document.getElementById('feedback');
+        
+        if (userAns === state.q.ans) {
+            // CORRECT
+            state.active = false; // Lock input
+            state.score += 10;
+            document.getElementById('lbl-score').innerText = state.score;
+            fb.innerText = "Correct! 🌟";
+            fb.className = "feedback-msg correct";
             playSound('correct');
+            
+            // AUTO ADVANCE
+            setTimeout(() => {
+                nextQuestion();
+            }, 1000);
+
+        } else {
+            // WRONG
+            fb.innerText = "Try again!";
+            fb.className = "feedback-msg wrong";
+            document.getElementById('display').classList.add('shake');
+            playSound('wrong');
+            state.inputStr = "";
+            setTimeout(() => {
+                document.getElementById('display').classList.remove('shake');
+                updateDisplay();
+            }, 400);
         }
+    }
 
-        function showScreen(name) {
-            Object.values(screens).forEach(s => s.classList.remove('active'));
-            screens[name].classList.add('active');
-        }
+    function endGame() {
+        const key = `astro_high_${state.year}`;
+        const high = parseInt(localStorage.getItem(key)||0);
+        if(state.score > high) localStorage.setItem(key, state.score);
 
-        // --- SOUNDS ---
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(type) {
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            const now = audioCtx.currentTime;
+        document.getElementById('res-score').innerText = state.score;
+        document.getElementById('res-high').innerText = Math.max(state.score, high);
+        switchScreen('screen-result');
+        playSound('correct');
+    }
 
-            if(type === 'tap') {
-                osc.frequency.setValueAtTime(600, now);
-                gain.gain.setValueAtTime(0.05, now);
-                osc.stop(now + 0.05);
-            } else if(type === 'correct') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.linearRampToValueAtTime(800, now+0.1);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.linearRampToValueAtTime(0, now+0.3);
-                osc.stop(now + 0.3);
-            } else {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(200, now);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.linearRampToValueAtTime(0, now+0.2);
-                osc.stop(now + 0.2);
-            }
-            osc.start(now);
-        }
+    // --- 6. UTILS ---
+    function quitGame() {
+        if(confirm("Exit Mission?")) showSetup();
+    }
 
-    </script>
+    function showSetup() {
+        switchScreen('screen-setup');
+    }
+
+    function switchScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+</script>
 </body>
 </html>
