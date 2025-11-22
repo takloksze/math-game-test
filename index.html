@@ -55,6 +55,7 @@
             max-width: 600px;
             margin: 0 auto;
             width: 100%;
+            overflow-y: auto;
         }
 
         .card {
@@ -87,22 +88,54 @@
         }
         .btn-year:active { background: var(--primary); color: white; }
 
+        .option-group {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .option-group label {
+            display: block;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .count-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .btn-count {
+            background: #f8f9fa;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 5px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-count.selected { background: var(--accent); color: white; }
+
 
         /* --- 2. GAME SCREEN (Split Layout) --- */
         
         /* Top Section: Header + Question */
         .game-top {
-            flex: 0 0 auto; /* Changed from flex: 4 to prevent flex growing issues */
+            flex: 0 0 auto;
             display: flex;
             flex-direction: column;
             padding: 10px 15px;
             position: relative;
-            z-index: 1; /* Lower than game-bottom */
+            z-index: 1;
         }
 
         .header {
             display: flex; justify-content: space-between; align-items: center;
-            color: white; font-weight: bold; font-size: 1.1rem;
+            color: white; font-weight: bold; font-size: 1rem;
         }
 
         .btn-quit {
@@ -121,76 +154,152 @@
             justify-content: center;
             margin-top: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            min-height: 180px; /* Fixed height instead of flex-grow */
+            min-height: 160px;
         }
 
-        .math-text { font-size: 2.8rem; font-weight: 800; color: #333; margin-bottom: 5px; }
+        .math-text { font-size: 2.5rem; font-weight: 800; color: #333; margin-bottom: 5px; }
         
         .input-display {
             background: #eee;
             border: 3px solid #ccc;
             border-radius: 12px;
-            height: 60px;
+            height: 55px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: bold;
             color: var(--primary);
             margin: 5px auto;
             width: 100%;
-            max-width: 300px;
+            max-width: 280px;
         }
         .input-display.filled { background: white; border-color: var(--accent); }
-        .feedback { height: 20px; font-weight: bold; font-size: 1.2rem; margin-top: 5px; }
+        .feedback { height: 20px; font-weight: bold; font-size: 1.1rem; margin-top: 5px; }
         .correct { color: #00c851; } .wrong { color: var(--secondary); }
 
         /* Bottom Section: Keypad */
         .game-bottom {
-            flex: 1; /* Takes remaining space */
+            flex: 1;
             background: #f4f4f4;
             border-top-left-radius: 30px;
             border-top-right-radius: 30px;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             position: relative;
-            z-index: 100; /* Higher z-index to ensure it's on top */
-            pointer-events: auto; /* Ensure it can receive clicks */
+            z-index: 100;
+            pointer-events: auto;
         }
 
         .numpad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 10px;
             height: 100%;
             position: relative;
-            z-index: 101; /* Ensure numpad is on top */
+            z-index: 101;
+            max-height: 320px;
+            margin: auto;
         }
 
         .key {
             background: white;
             border: none;
             border-radius: 15px;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: bold;
             color: #333;
             box-shadow: 0 4px 0 #ddd;
             cursor: pointer;
-            height: 100%;
             touch-action: manipulation;
             user-select: none;
             -webkit-user-select: none;
             position: relative;
-            z-index: 102; /* Buttons on top */
-            pointer-events: auto; /* Ensure buttons receive clicks */
+            z-index: 102;
+            pointer-events: auto;
+            min-height: 65px;
         }
         .key:active { background: #e0e0e0; transform: translateY(2px); box-shadow: none; }
         
-        .key-del { background: #ffbdc9; color: #c21d42; }
-        .key-go { background: var(--primary); color: white; box-shadow: 0 4px 0 #4a43b8; }
+        .key-del { background: #ffbdc9; color: #c21d42; font-size: 1.2rem; }
+        .key-go { background: var(--primary); color: white; box-shadow: 0 4px 0 #4a43b8; font-size: 1.2rem; }
 
         /* RESULTS */
+        .results-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            overflow-y: auto;
+        }
+
+        .results-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            border: 4px solid var(--primary);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .results-card h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #f0f0ff, #e6e6ff);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 2px dotted #ccc;
+            font-size: 1rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .summary-item:last-child { border-bottom: none; }
+
+        .time-breakdown {
+            margin-top: 20px;
+        }
+
+        .time-breakdown h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .time-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f9f9f9;
+            margin-bottom: 6px;
+            border-radius: 12px;
+            border: 2px solid #eee;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .slow {
+            background: linear-gradient(135deg, #ffe6e6, #fff0f0);
+            border-color: var(--secondary);
+        }
+
         .btn-big {
             width: 100%; padding: 18px;
             background: var(--primary); color: white;
@@ -205,8 +314,15 @@
 
         /* Tablet Tweak */
         @media (min-width: 600px) {
-            .math-text { font-size: 4rem; }
-            .game-bottom { max-height: 500px; border-radius: 30px; margin: 0 20px 20px 20px; }
+            .math-text { font-size: 3.5rem; }
+            .game-bottom { max-height: 450px; border-radius: 30px; margin: 0 20px 20px 20px; }
+        }
+
+        @media (max-width: 400px) {
+            .math-text { font-size: 2rem; }
+            .input-display { font-size: 1.6rem; height: 50px; }
+            .key { font-size: 1.5rem; min-height: 55px; }
+            .numpad { max-height: 280px; gap: 8px; }
         }
     </style>
 </head>
@@ -220,6 +336,11 @@
                 <h1>🚀 Maths Academy</h1>
                 <p>Select Year Group:</p>
                 <div class="year-grid" id="menu"></div>
+                
+                <div class="option-group">
+                    <label>How many questions?</label>
+                    <div class="count-grid" id="countMenu"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -228,8 +349,8 @@
         <div class="game-top">
             <div class="header">
                 <button class="btn-quit" onclick="window.game.quit()">❌ Quit</button>
-                <span id="lbl-year">Year 3</span>
-                <span>⭐ <span id="lbl-score">0</span></span>
+                <span id="lbl-progress">Q 1/10</span>
+                <span>⏱️ <span id="lbl-time">0s</span></span>
             </div>
             <div class="question-box">
                 <div class="math-text" id="q-text">?</div>
@@ -257,10 +378,30 @@
     </div>
 
     <div id="results" class="screen">
-        <div class="setup-container">
-            <div class="card">
-                <h1>Mission Complete!</h1>
-                <p>Score: <strong id="final-score" style="font-size:1.5rem">0</strong></p>
+        <div class="results-container">
+            <div class="results-card">
+                <h2>🎉 Mission Complete!</h2>
+                
+                <div class="summary">
+                    <div class="summary-item">
+                        <span><strong>⏱️ Total Time:</strong></span>
+                        <span id="total-time">0:00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span><strong>⚡ Average Time:</strong></span>
+                        <span id="avg-time">0s</span>
+                    </div>
+                    <div class="summary-item">
+                        <span><strong>🎯 Total Tries:</strong></span>
+                        <span id="total-attempts">0</span>
+                    </div>
+                </div>
+
+                <div class="time-breakdown">
+                    <h3>⏰ Question Times</h3>
+                    <div id="time-list"></div>
+                </div>
+
                 <button class="btn-big" onclick="window.game.showSetup()">Play Again 🔄</button>
             </div>
         </div>
@@ -277,20 +418,58 @@
                 { id: 5, label: "Year 5", desc: "Big Mix" },
                 { id: 6, label: "Year 6", desc: "Expert" }
             ],
-            state: { year: 0, score: 0, current: "", q: null, count: 0, active: false },
+            counts: [5, 10, 15, 20],
+            state: { 
+                year: 0, 
+                count: 10, 
+                score: 0, 
+                current: "", 
+                q: null, 
+                questionNum: 0, 
+                active: false,
+                problemTimes: [],
+                totalAttempts: 0,
+                startTime: null,
+                questionStartTime: null,
+                timerInterval: null
+            },
             audioCtx: null,
 
+            // --- INIT ---
             init: function() {
                 const menu = document.getElementById('menu');
                 this.years.forEach(y => {
                     let btn = document.createElement('button');
                     btn.className = 'btn-year';
                     btn.innerHTML = `${y.label}<br><small>${y.desc}</small>`;
-                    btn.onclick = () => this.start(y.id);
+                    btn.onclick = () => this.selectYear(y.id);
                     menu.appendChild(btn);
+                });
+
+                const countMenu = document.getElementById('countMenu');
+                this.counts.forEach(c => {
+                    let btn = document.createElement('button');
+                    btn.className = 'btn-count';
+                    if(c === 10) btn.classList.add('selected');
+                    btn.textContent = c;
+                    btn.onclick = () => this.selectCount(c);
+                    countMenu.appendChild(btn);
                 });
             },
 
+            selectYear: function(id) {
+                this.state.year = id;
+                this.start(id);
+            },
+
+            selectCount: function(count) {
+                this.state.count = count;
+                document.querySelectorAll('.btn-count').forEach(b => b.classList.remove('selected'));
+                event.target.classList.add('selected');
+                this.play('tap');
+            },
+
+            // --- AUDIO ---
             play: function(type) {
                 try {
                     if(!this.audioCtx) this.audioCtx = new (window.AudioContext||window.webkitAudioContext)();
@@ -327,22 +506,44 @@
                 }
             },
 
+            // --- TIMER ---
+            startTimer: function() {
+                this.state.startTime = Date.now();
+                this.state.timerInterval = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - this.state.startTime) / 1000);
+                    document.getElementById('lbl-time').innerText = elapsed + 's';
+                }, 1000);
+            },
+
+            stopTimer: function() {
+                if(this.state.timerInterval) {
+                    clearInterval(this.state.timerInterval);
+                    this.state.timerInterval = null;
+                }
+            },
+
+            // --- GAME LOOP ---
             start: function(id) {
                 this.state.year = id;
                 this.state.score = 0;
-                this.state.count = 0;
-                document.getElementById('lbl-year').innerText = this.years[id].label;
-                document.getElementById('lbl-score').innerText = "0";
+                this.state.questionNum = 0;
+                this.state.problemTimes = [];
+                this.state.totalAttempts = 0;
+                
                 this.switch('game');
+                this.startTimer();
                 this.next();
             },
 
             next: function() {
-                if(this.state.count >= 10) return this.end();
-                this.state.count++;
+                if(this.state.questionNum >= this.state.count) return this.end();
+                this.state.questionNum++;
                 this.state.current = "";
                 this.state.active = true;
+                this.state.questionStartTime = Date.now();
+                this.state.currentAttempts = 0;
                 
+                // Generate Logic
                 const rand = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
                 let n1, n2, op, ans;
                 let y = this.state.year;
@@ -374,15 +575,17 @@
                 if(op==='-') ans = n1-n2;
                 if(op==='x') ans = n1*n2;
 
-                this.state.q = { text: `${n1} ${op==='x'?'×':op} ${n2} = ?`, ans: ans };
+                this.state.q = { text: `${n1} ${op==='x'?'×':op} ${n2} = ?`, ans: ans, problem: `${n1} ${op==='x'?'×':op} ${n2}` };
                 
+                // Update UI
+                document.getElementById('lbl-progress').innerText = `Q ${this.state.questionNum}/${this.state.count}`;
                 document.getElementById('q-text').innerText = this.state.q.text;
                 document.getElementById('feedback').innerText = "";
                 this.updateInput();
             },
 
+            // --- INPUT ---
             input: function(val) {
-                console.log("Input clicked:", val); // DEBUG
                 if(!this.state.active) return;
                 
                 if(val === 'DEL') {
@@ -396,7 +599,7 @@
 
             updateInput: function() {
                 let el = document.getElementById('inp-text');
-                el.innerText = this.state.current;
+                el.innerText = this.state.current || '';
                 if(this.state.current.length > 0) el.classList.add('filled');
                 else el.classList.remove('filled');
             },
@@ -406,11 +609,20 @@
                 
                 let user = parseInt(this.state.current);
                 let fb = document.getElementById('feedback');
+                this.state.currentAttempts++;
+                this.state.totalAttempts++;
                 
                 if(user === this.state.q.ans) {
                     this.state.active = false;
                     this.state.score += 10;
-                    document.getElementById('lbl-score').innerText = this.state.score;
+                    
+                    const timeSpent = (Date.now() - this.state.questionStartTime) / 1000;
+                    this.state.problemTimes.push({
+                        problem: this.state.q.problem,
+                        time: timeSpent,
+                        attempts: this.state.currentAttempts
+                    });
+                    
                     fb.innerText = "Correct! 🌟";
                     fb.className = "feedback correct";
                     this.play('win');
@@ -429,16 +641,56 @@
             },
 
             end: function() {
-                document.getElementById('final-score').innerText = this.state.score;
+                this.stopTimer();
+                
+                const totalTime = this.state.problemTimes.reduce((sum, p) => sum + p.time, 0);
+                const avgTime = totalTime / this.state.problemTimes.length;
+                
+                document.getElementById('total-time').innerText = this.formatTime(totalTime);
+                document.getElementById('avg-time').innerText = avgTime.toFixed(1) + 's';
+                document.getElementById('total-attempts').innerText = this.state.totalAttempts;
+                
+                const sorted = [...this.state.problemTimes].sort((a, b) => b.time - a.time);
+                const timeList = document.getElementById('time-list');
+                timeList.innerHTML = '';
+                
+                sorted.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'time-item';
+                    if(index < 3) div.classList.add('slow');
+                    
+                    const emoji = index === 0 ? '🐌' : index === 1 ? '🐢' : index === 2 ? '🐇' : '⚡';
+                    
+                    div.innerHTML = `
+                        <span>${emoji} ${item.problem}</span>
+                        <span>${item.time.toFixed(1)}s (${item.attempts} ${item.attempts > 1 ? 'tries' : 'try'})</span>
+                    `;
+                    timeList.appendChild(div);
+                });
+                
                 this.switch('results');
                 this.play('win');
             },
 
+            formatTime: function(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            },
+
             quit: function() {
-                if(confirm("Exit Mission?")) this.showSetup();
+                if(confirm("Exit Mission?")) {
+                    this.stopTimer();
+                    this.showSetup();
+                }
             },
 
             showSetup: function() {
+                this.stopTimer();
+                this.state.questionNum = 0;
+                this.state.problemTimes = [];
+                this.state.totalAttempts = 0;
+                document.getElementById('lbl-time').innerText = '0s';
                 this.switch('setup');
             },
 
