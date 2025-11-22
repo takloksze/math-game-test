@@ -9,19 +9,18 @@
             --primary: #6C63FF;
             --secondary: #FF6584;
             --accent: #00E5FF;
-            --dark: #1a1a2e;
-            --panel: rgba(255, 255, 255, 0.95);
-            --font: system-ui, -apple-system, sans-serif;
+            --bg-dark: #1a1a2e;
+            --panel-bg: rgba(255, 255, 255, 0.95);
         }
 
         /* RESET & BASICS */
         * { box-sizing: border-box; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
         
         body {
-            font-family: var(--font);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             margin: 0;
-            height: 100vh;
+            height: 100vh; /* Full viewport height */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -29,24 +28,26 @@
             color: #333;
         }
 
-        /* BACKGROUND */
+        /* BACKGROUND - Important: pointer-events none so clicks go through to buttons */
         .stars {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+            pointer-events: none; 
             background-image: 
                 radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
                 radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px);
             background-size: 550px 550px, 350px 350px;
-            background-position: 0 0, 40px 60px;
         }
 
-        /* APP CONTAINER */
+        /* CONTAINER */
         .app-container {
+            position: relative;
+            z-index: 1; /* Above stars */
             width: 100%;
             max-width: 600px;
             height: 100%;
             display: flex;
             flex-direction: column;
-            position: relative;
+            padding: 10px;
         }
 
         /* SCREENS */
@@ -54,415 +55,471 @@
             display: none;
             flex-direction: column;
             height: 100%;
-            padding: 20px;
             animation: fadeIn 0.3s ease;
         }
         .screen.active { display: flex; }
 
         /* START SCREEN */
-        .title-card {
-            background: var(--panel);
+        .panel {
+            background: var(--panel-bg);
             border-radius: 20px;
             padding: 20px;
             text-align: center;
+            border: 4px solid var(--primary);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             margin: auto 0;
-            border: 4px solid var(--primary);
-            max-height: 90vh;
             overflow-y: auto;
+            max-height: 90vh;
         }
-        h1 { color: var(--primary); margin: 10px 0; font-size: 1.8rem; }
-        
-        .grid-menu {
+
+        h1 { color: var(--primary); margin: 5px 0 15px 0; font-size: 1.8rem; }
+
+        .year-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 12px;
         }
-        
+
         .btn-year {
             background: white;
-            border: 3px solid #ccc;
-            color: var(--dark);
-            padding: 15px 10px;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 15px 5px;
             border-radius: 12px;
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.1s;
         }
-        .btn-year:active { transform: scale(0.95); border-color: var(--primary); background: #eee; }
+        .btn-year:active { background: var(--primary); color: white; transform: scale(0.95); }
 
         /* GAME SCREEN */
         .game-header {
             display: flex; justify-content: space-between; align-items: center;
-            color: white; padding: 10px 0; font-size: 1.1rem;
-            height: 50px;
+            color: white; font-weight: bold; margin-bottom: 10px; font-size: 1.1rem;
         }
 
-        .btn-exit {
+        .btn-quit {
             background: var(--secondary); color: white; border: none;
-            padding: 5px 15px; border-radius: 20px; font-weight: bold; cursor: pointer;
-        }
-        
-        .game-display {
-            background: var(--panel);
-            border-radius: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 10px 0;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            position: relative;
-            max-height: 40vh; /* Keep display compact */
+            padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer;
         }
 
-        .question-text { font-size: 3rem; color: var(--dark); font-weight: bold; margin-bottom: 10px; }
+        .problem-area {
+            background: var(--panel-bg);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            flex-grow: 0;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .question-text { font-size: 2.8rem; color: var(--bg-dark); font-weight: bold; margin-bottom: 10px; }
         
-        .answer-box {
-            min-width: 140px;
-            height: 70px;
-            background: #f0f2f5;
-            border: 4px solid #ccc;
+        /* THE DISPLAY (Not an input) */
+        .answer-display {
+            background: #fff;
+            border: 3px solid #ccc;
             border-radius: 15px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
-            color: var(--primary);
             font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
         }
-        .answer-box.active { border-color: var(--accent); background: white; }
-        
-        .feedback-msg { height: 25px; margin-top: 10px; font-weight: bold; font-size: 1.1rem; }
-        .correct { color: #00C851; }
-        .wrong { color: var(--secondary); }
+        .answer-display.active { border-color: var(--accent); }
 
-        /* NUMPAD */
+        .feedback { min-height: 25px; font-weight: bold; font-size: 1.2rem; }
+        .feedback.correct { color: green; }
+        .feedback.wrong { color: var(--secondary); }
+
+        /* NUMPAD - Logic copied from your file */
+        .numpad-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: flex-end; /* Push to bottom */
+            padding-bottom: 10px;
+        }
+
         .numpad {
+            width: 100%;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            padding-bottom: 20px;
-            flex-grow: 1; /* Fill remaining space */
         }
-        .num-btn {
+
+        .numpad-btn {
             background: white;
             border: none;
             border-radius: 15px;
             font-size: 1.8rem;
             font-weight: bold;
-            color: var(--dark);
+            color: #333;
             box-shadow: 0 4px 0 #bbb;
             cursor: pointer;
-            height: 100%; /* Fill grid cell */
-            min-height: 60px;
+            padding: 15px 0;
+            min-height: 65px;
         }
-        .num-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #ccc; background: #e0e0e0; }
         
-        .btn-enter { background: var(--primary); color: white; box-shadow: 0 4px 0 #4a43b8; }
-        .btn-del { background: var(--secondary); color: white; box-shadow: 0 4px 0 #d93d5e; }
+        .numpad-btn:active { transform: translateY(4px); box-shadow: none; background: #eee; }
+        .numpad-btn.special { background: var(--secondary); color: white; box-shadow: 0 4px 0 #c23a54; }
+        .numpad-btn.enter { background: var(--primary); color: white; box-shadow: 0 4px 0 #4a43b8; }
 
         /* RESULTS SCREEN */
-        .results-card {
-            background: var(--panel);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            margin: auto;
-            width: 90%;
-        }
-        .stat-row { display: flex; justify-content: space-between; margin: 15px 0; font-size: 1.2rem; border-bottom: 1px dashed #ccc; }
-        
-        .btn-action {
+        .btn-restart {
             width: 100%; padding: 15px;
             background: var(--primary); color: white;
             border: none; border-radius: 50px;
-            font-size: 1.3rem; margin-top: 20px;
-            cursor: pointer;
+            font-size: 1.3rem; margin-top: 20px; cursor: pointer;
         }
 
+        /* ANIMATIONS */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .shake { animation: shake 0.4s ease-in-out; border-color: var(--secondary) !important; color: var(--secondary); }
+        .shake { animation: shake 0.4s ease-in-out; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
     </style>
 </head>
 <body>
 
-<div class="stars"></div>
+    <div class="stars"></div>
 
-<div class="app-container">
-    
-    <div id="screen-start" class="screen active">
-        <div class="title-card">
-            <h1>🚀 Astro Maths</h1>
-            <p>Select Your Year Group</p>
-            <div class="grid-menu" id="year-menu">
+    <div class="app-container">
+        
+        <div id="screen-setup" class="screen active">
+            <div class="panel">
+                <h1>🚀 Astro Maths</h1>
+                <p>Choose your mission:</p>
+                <div class="year-grid" id="year-buttons">
+                    </div>
+            </div>
+        </div>
+
+        <div id="screen-game" class="screen">
+            <div class="game-header">
+                <button class="btn-quit" id="btn-quit">❌ Quit</button>
+                <span id="label-year">Year 3</span>
+                <span>⭐ <span id="label-score">0</span></span>
+            </div>
+
+            <div class="problem-area">
+                <div class="question-text" id="question">?</div>
+                <div class="answer-display" id="answer-display"></div>
+                <div class="feedback" id="feedback"></div>
+            </div>
+
+            <div class="numpad-container">
+                <div class="numpad">
+                    <button class="numpad-btn" data-number="1">1</button>
+                    <button class="numpad-btn" data-number="2">2</button>
+                    <button class="numpad-btn" data-number="3">3</button>
+                    <button class="numpad-btn" data-number="4">4</button>
+                    <button class="numpad-btn" data-number="5">5</button>
+                    <button class="numpad-btn" data-number="6">6</button>
+                    <button class="numpad-btn" data-number="7">7</button>
+                    <button class="numpad-btn" data-number="8">8</button>
+                    <button class="numpad-btn" data-number="9">9</button>
+                    <button class="numpad-btn special" id="btn-del">DEL</button>
+                    <button class="numpad-btn" data-number="0">0</button>
+                    <button class="numpad-btn enter" id="btn-enter">GO</button>
                 </div>
-        </div>
-    </div>
-
-    <div id="screen-game" class="screen">
-        <div class="game-header">
-            <button class="btn-exit" onclick="exitGame()">❌ Quit</button>
-            <span id="badge-year" style="font-weight:bold">Year 1</span>
-            <span>⭐ <span id="score">0</span></span>
-        </div>
-
-        <div class="game-display">
-            <div class="question-text" id="question">?</div>
-            <div class="answer-box" id="display-answer"></div>
-            <div class="feedback-msg" id="feedback"></div>
-        </div>
-
-        <div class="numpad">
-            <button class="num-btn" onclick="handleInput('1')">1</button>
-            <button class="num-btn" onclick="handleInput('2')">2</button>
-            <button class="num-btn" onclick="handleInput('3')">3</button>
-            <button class="num-btn" onclick="handleInput('4')">4</button>
-            <button class="num-btn" onclick="handleInput('5')">5</button>
-            <button class="num-btn" onclick="handleInput('6')">6</button>
-            <button class="num-btn" onclick="handleInput('7')">7</button>
-            <button class="num-btn" onclick="handleInput('8')">8</button>
-            <button class="num-btn" onclick="handleInput('9')">9</button>
-            <button class="num-btn btn-del" onclick="handleInput('DEL')">DEL</button>
-            <button class="num-btn" onclick="handleInput('0')">0</button>
-            <button class="num-btn btn-enter" onclick="checkAnswer()">GO</button>
-        </div>
-    </div>
-
-    <div id="screen-result" class="screen">
-        <div class="results-card">
-            <h1>Mission Complete!</h1>
-            <div class="stat-row">
-                <span>Score:</span>
-                <strong id="final-score">0</strong>
             </div>
-            <div class="stat-row">
-                <span>High Score:</span>
-                <strong id="high-score">0</strong>
-            </div>
-            <button class="btn-action" onclick="showStartScreen()">Play Again 🔄</button>
         </div>
+
+        <div id="screen-results" class="screen">
+            <div class="panel">
+                <h1>Mission Complete! 🏁</h1>
+                <p>Total Score: <strong id="final-score" style="font-size:1.5rem">0</strong></p>
+                <p>High Score: <strong id="final-high-score">0</strong></p>
+                <button class="btn-restart" id="btn-restart">Play Again 🔄</button>
+            </div>
+        </div>
+
     </div>
 
-</div>
+    <script>
+        // --- DATA & STATE ---
+        const years = [
+            { id: 0, label: "Reception", desc: "Add to 10" },
+            { id: 1, label: "Year 1", desc: "Add/Sub to 20" },
+            { id: 2, label: "Year 2", desc: "Tables 2,5,10" },
+            { id: 3, label: "Year 3", desc: "x3,x4,x8 & 3-Digit" },
+            { id: 4, label: "Year 4", desc: "Tables up to 12" },
+            { id: 5, label: "Year 5", desc: "Big Mix" },
+            { id: 6, label: "Year 6", desc: "Expert" }
+        ];
 
-<script>
-    // --- 1. CONFIGURATION ---
-    const years = [
-        { id: 0, label: "Reception", desc: "Add to 10" },
-        { id: 1, label: "Year 1", desc: "Add/Sub to 20" },
-        { id: 2, label: "Year 2", desc: "Tables 2,5,10" },
-        { id: 3, label: "Year 3", desc: "x3,x4,x8 & 3-Digit" },
-        { id: 4, label: "Year 4", desc: "Tables up to 12" },
-        { id: 5, label: "Year 5", desc: "Big Mix" },
-        { id: 6, label: "Year 6", desc: "Expert Challenge" }
-    ];
+        let state = {
+            active: false,
+            year: 0,
+            score: 0,
+            currentAnswer: "", // STRING based state (Like your file)
+            problem: { text: "", answer: 0 },
+            questionCount: 0
+        };
 
-    let state = {
-        active: false,
-        year: 0,
-        score: 0,
-        input: "",
-        q: { n1:0, n2:0, op:'+', ans:0 }
-    };
+        const MAX_QUESTIONS = 10;
 
-    // --- 2. STARTUP ---
-    // Generate the menu buttons immediately
-    const menuContainer = document.getElementById('year-menu');
-    years.forEach(y => {
-        let btn = document.createElement('button');
-        btn.className = 'btn-year';
-        btn.innerHTML = `${y.label}<br><span style="font-size:0.8rem; font-weight:normal">${y.desc}</span>`;
-        // Inline onclick to guarantee it works
-        btn.onclick = function() { startGame(y.id); };
-        menuContainer.appendChild(btn);
-    });
+        // --- DOM ELEMENTS ---
+        const screens = {
+            setup: document.getElementById('screen-setup'),
+            game: document.getElementById('screen-game'),
+            results: document.getElementById('screen-results')
+        };
+        const els = {
+            question: document.getElementById('question'),
+            display: document.getElementById('answer-display'),
+            feedback: document.getElementById('feedback'),
+            score: document.getElementById('label-score'),
+            yearLabel: document.getElementById('label-year'),
+            yearBtns: document.getElementById('year-buttons')
+        };
 
-    // --- 3. GAME LOGIC ---
-    function startGame(id) {
-        state.year = id;
-        state.score = 0;
-        state.active = true;
-        state.input = "";
-        
-        document.getElementById('badge-year').innerText = years[id].label;
-        document.getElementById('score').innerText = "0";
-        document.getElementById('feedback').innerText = "";
-        
-        switchScreen('screen-game');
-        nextQuestion();
-    }
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initMenu();
+            attachListeners();
+        });
 
-    function exitGame() {
-        if(confirm("Are you sure you want to quit?")) {
-            state.active = false;
-            switchScreen('screen-start');
-        }
-    }
-
-    function nextQuestion() {
-        state.input = "";
-        state.q = generateMath(state.year);
-        updateDisplay();
-    }
-
-    function generateMath(year) {
-        const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-        let n1, n2, op, ans;
-        let r = Math.random();
-
-        // LOGIC FOR EACH YEAR
-        if (year === 0) { // Reception
-            n1 = randInt(1,5); n2 = randInt(1,4); op='+';
-        } 
-        else if (year === 1) { // Year 1
-            op = r > 0.5 ? '+' : '-';
-            n1 = randInt(5, 20); n2 = randInt(1, 9);
-            if(op === '-' && n1 < n2) [n1, n2] = [n2, n1];
-        }
-        else if (year === 2) { // Year 2
-            if(r > 0.6) { // Tables
-                n1 = [2,5,10][randInt(0,2)]; n2 = randInt(1,12); op='x';
-            } else { // Add/Sub
-                op = r > 0.8 ? '-' : '+';
-                n1 = randInt(10,50); n2 = randInt(2,20);
-            }
-        }
-        else if (year === 3) { // YEAR 3 SPECIFIC
-            if(r > 0.5) {
-                // Tables 3, 4, 8
-                n1 = [3,4,8][randInt(0,2)]; n2 = randInt(1,12); op='x';
-            } else {
-                // 3-Digit Add/Sub
-                op = r > 0.75 ? '-' : '+';
-                if(op === '+') { n1 = randInt(100,500); n2 = randInt(10,300); }
-                else { n1 = randInt(200,800); n2 = randInt(10,150); }
-            }
-        }
-        else if (year === 4) { // Year 4
-            n1 = randInt(2,12); n2 = randInt(2,12); op='x';
-        }
-        else { // Year 5+6
-            if(r > 0.6) {
-                n1 = randInt(100,900); n2 = randInt(50,400); op = r > 0.8 ? '-' : '+';
-            } else {
-                n1 = randInt(3,15); n2 = randInt(10,50); op='x';
-            }
+        function initMenu() {
+            els.yearBtns.innerHTML = '';
+            years.forEach(y => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-year';
+                btn.innerHTML = `${y.label}<br><small>${y.desc}</small>`;
+                btn.addEventListener('click', () => startGame(y.id));
+                els.yearBtns.appendChild(btn);
+            });
         }
 
-        // CALCULATE ANSWER
-        if(op === '+') ans = n1 + n2;
-        if(op === '-') { if(n1<n2) [n1,n2]=[n2,n1]; ans = n1-n2; }
-        if(op === 'x') ans = n1 * n2;
+        // --- GAME LOGIC ---
+        function startGame(yearId) {
+            state.year = yearId;
+            state.score = 0;
+            state.currentAnswer = "";
+            state.questionCount = 0;
+            state.active = true;
 
-        return { n1, n2, op: op === 'x' ? '×' : op, ans };
-    }
-
-    function updateDisplay() {
-        document.getElementById('question').innerText = `${state.q.n1} ${state.q.op} ${state.q.n2}`;
-        let box = document.getElementById('display-answer');
-        box.innerText = state.input;
-        if(state.input.length > 0) box.classList.add('active');
-        else box.classList.remove('active');
-    }
-
-    // --- 4. INPUT HANDLING (THE FIX) ---
-    // This is called directly by the HTML buttons
-    function handleInput(val) {
-        if(!state.active) return;
-        
-        if(val === 'DEL') {
-            state.input = state.input.slice(0, -1);
-        } else {
-            if(state.input.length < 6) state.input += val;
-        }
-        playSound('tap');
-        updateDisplay();
-    }
-
-    // Listen for PC Keyboard too
-    document.addEventListener('keydown', (e) => {
-        if(!state.active) return;
-        if(e.key >= '0' && e.key <= '9') handleInput(e.key);
-        if(e.key === 'Backspace') handleInput('DEL');
-        if(e.key === 'Enter') checkAnswer();
-    });
-
-    function checkAnswer() {
-        if(!state.active || state.input === "") return;
-
-        let userAns = parseInt(state.input);
-        let fb = document.getElementById('feedback');
-        let box = document.getElementById('display-answer');
-
-        if(userAns === state.q.ans) {
-            // Correct
-            state.score += 10;
-            document.getElementById('score').innerText = state.score;
-            playSound('correct');
-            fb.innerText = "Correct! 🌟";
-            fb.className = "feedback-msg correct";
+            els.score.innerText = "0";
+            els.yearLabel.innerText = years[yearId].label;
+            els.feedback.innerText = "";
             
-            setTimeout(() => {
-                fb.innerText = "";
-                nextQuestion();
-            }, 800);
-        } else {
-            // Wrong
-            playSound('wrong');
-            fb.innerText = "Try again";
-            fb.className = "feedback-msg wrong";
-            box.classList.add('shake');
-            state.input = "";
-            setTimeout(() => {
-                box.classList.remove('shake');
+            showScreen('game');
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            if (state.questionCount >= MAX_QUESTIONS) {
+                endGame();
+                return;
+            }
+            
+            state.questionCount++;
+            state.currentAnswer = "";
+            updateDisplay();
+            
+            state.problem = generateMath(state.year);
+            els.question.innerText = state.problem.text;
+            els.feedback.innerText = "";
+        }
+
+        function generateMath(year) {
+            const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+            let n1, n2, op, text, ans;
+            const r = Math.random();
+
+            switch(year) {
+                case 0: // Reception
+                    n1 = randInt(1,5); n2 = randInt(1,4); op='+';
+                    break;
+                case 1: // Year 1
+                    op = r > 0.5 ? '+' : '-';
+                    n1 = randInt(5, 20); n2 = randInt(1, 9);
+                    break;
+                case 2: // Year 2
+                    if(r > 0.6) { // Tables
+                        n1 = [2,5,10][randInt(0,2)]; n2 = randInt(1,12); op='x';
+                    } else { // Add/Sub
+                        op = r > 0.8 ? '-' : '+';
+                        n1 = randInt(10,50); n2 = randInt(2,20);
+                    }
+                    break;
+                case 3: // YEAR 3 SPECIFIC LOGIC
+                    if(r > 0.5) {
+                        // Times Tables 3, 4, 8
+                        n1 = [3,4,8][randInt(0,2)]; n2 = randInt(1,12); op='x';
+                    } else {
+                        // 3-Digit Addition/Subtraction
+                        op = r > 0.75 ? '-' : '+';
+                        if(op === '+') { 
+                            n1 = randInt(100,500); n2 = randInt(10,300); 
+                        } else { 
+                            n1 = randInt(200,800); n2 = randInt(10,150); 
+                        }
+                    }
+                    break;
+                case 4: // Year 4
+                    n1 = randInt(2,12); n2 = randInt(2,12); op='x';
+                    break;
+                default: // Year 5/6
+                    if(r > 0.6) {
+                        n1 = randInt(100,900); n2 = randInt(50,400); op = r > 0.8 ? '-' : '+';
+                    } else {
+                        n1 = randInt(3,15); n2 = randInt(10,50); op='x';
+                    }
+                    break;
+            }
+
+            // SAFETY: No negatives
+            if (op === '-' && n1 < n2) [n1, n2] = [n2, n1];
+
+            // CALCULATE
+            if(op === '+') ans = n1 + n2;
+            if(op === '-') ans = n1 - n2;
+            if(op === 'x') ans = n1 * n2;
+
+            // FORMAT TEXT
+            const displayOp = op === 'x' ? '×' : op;
+            return { text: `${n1} ${displayOp} ${n2} = ?`, answer: ans };
+        }
+
+        // --- INPUT HANDLING (Based on your file) ---
+        function attachListeners() {
+            // Numbers
+            document.querySelectorAll('.numpad-btn[data-number]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const num = btn.dataset.number;
+                    handleInput(num);
+                });
+            });
+
+            // Delete
+            document.getElementById('btn-del').addEventListener('click', () => {
+                state.currentAnswer = state.currentAnswer.slice(0, -1);
                 updateDisplay();
-            }, 400);
+                playSound('tap');
+            });
+
+            // Enter
+            document.getElementById('btn-enter').addEventListener('click', checkAnswer);
+
+            // Quit
+            document.getElementById('btn-quit').addEventListener('click', () => {
+                if(confirm("Exit mission?")) showScreen('setup');
+            });
+
+            // Restart
+            document.getElementById('btn-restart').addEventListener('click', () => showScreen('setup'));
+
+            // Keyboard support
+            document.addEventListener('keydown', (e) => {
+                if(!state.active) return;
+                if(e.key >= '0' && e.key <= '9') handleInput(e.key);
+                if(e.key === 'Backspace') {
+                    state.currentAnswer = state.currentAnswer.slice(0, -1);
+                    updateDisplay();
+                }
+                if(e.key === 'Enter') checkAnswer();
+            });
         }
-    }
 
-    // --- 5. UTILITIES ---
-    function switchScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-    function showStartScreen() {
-        switchScreen('screen-start');
-    }
-
-    // Simple Sound Synth
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(type) {
-        if(audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        const now = audioCtx.currentTime;
-        
-        if(type==='tap') {
-            osc.frequency.setValueAtTime(600, now);
-            gain.gain.setValueAtTime(0.05, now);
-            osc.stop(now + 0.05);
-        } else if(type==='correct') {
-            osc.frequency.setValueAtTime(400, now);
-            osc.frequency.linearRampToValueAtTime(800, now+0.1);
-            gain.gain.setValueAtTime(0.1, now);
-            osc.stop(now + 0.2);
-        } else {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(200, now);
-            gain.gain.setValueAtTime(0.1, now);
-            osc.stop(now + 0.2);
+        function handleInput(num) {
+            if(!state.active) return;
+            if(state.currentAnswer.length < 6) {
+                state.currentAnswer += num;
+                updateDisplay();
+                playSound('tap');
+            }
         }
-        osc.start(now);
-    }
 
-</script>
+        function updateDisplay() {
+            els.display.innerText = state.currentAnswer;
+            if(state.currentAnswer.length > 0) els.display.classList.add('active');
+            else els.display.classList.remove('active');
+        }
+
+        function checkAnswer() {
+            if(!state.active || state.currentAnswer === "") return;
+            
+            const userAns = parseInt(state.currentAnswer);
+            
+            if(userAns === state.problem.answer) {
+                // Correct
+                state.score += 10;
+                els.score.innerText = state.score;
+                els.feedback.innerText = "Correct! 🌟";
+                els.feedback.className = "feedback correct";
+                playSound('correct');
+                
+                setTimeout(nextQuestion, 800);
+            } else {
+                // Wrong
+                els.feedback.innerText = "Try again!";
+                els.feedback.className = "feedback wrong";
+                els.display.classList.add('shake');
+                playSound('wrong');
+                state.currentAnswer = "";
+                
+                setTimeout(() => {
+                    els.display.classList.remove('shake');
+                    updateDisplay();
+                }, 400);
+            }
+        }
+
+        function endGame() {
+            state.active = false;
+            
+            // Save High Score
+            const key = `astro_high_${state.year}`;
+            const oldHigh = parseInt(localStorage.getItem(key) || 0);
+            if(state.score > oldHigh) localStorage.setItem(key, state.score);
+
+            document.getElementById('final-score').innerText = state.score;
+            document.getElementById('final-high-score').innerText = Math.max(state.score, oldHigh);
+            
+            showScreen('results');
+            playSound('correct');
+        }
+
+        function showScreen(name) {
+            Object.values(screens).forEach(s => s.classList.remove('active'));
+            screens[name].classList.add('active');
+        }
+
+        // --- SOUNDS ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if(type === 'tap') {
+                osc.frequency.setValueAtTime(600, now);
+                gain.gain.setValueAtTime(0.05, now);
+                osc.stop(now + 0.05);
+            } else if(type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.linearRampToValueAtTime(800, now+0.1);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now+0.3);
+                osc.stop(now + 0.3);
+            } else {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now+0.2);
+                osc.stop(now + 0.2);
+            }
+            osc.start(now);
+        }
+
+    </script>
 </body>
 </html>
