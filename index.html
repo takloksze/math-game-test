@@ -9,42 +9,30 @@
             --primary: #6C63FF;
             --secondary: #FF6584;
             --accent: #00E5FF;
-            --dark-bg: #1a1a2e;
-            --card-bg: #ffffff;
+            --dark: #1a1a2e;
+            --white: #ffffff;
         }
 
-        /* 1. RESET & LAYOUT */
-        * { box-sizing: border-box; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+        * { box-sizing: border-box; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             margin: 0;
             height: 100vh;
-            overflow: hidden; /* No scrolling */
+            overflow: hidden;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
         }
 
+        /* BACKGROUND */
         .stars {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 0; pointer-events: none;
             background-image: 
                 radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
                 radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px);
             background-size: 550px 550px, 350px 350px;
-        }
-
-        /* 2. APP CONTAINER - MOBILE OPTIMIZED */
-        .app-container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 500px; /* Constrain width on tablets */
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
         }
 
         /* SCREENS */
@@ -52,34 +40,43 @@
             display: none;
             flex-direction: column;
             height: 100%;
-            animation: fadeIn 0.3s ease;
+            width: 100%;
+            position: relative;
         }
         .screen.active { display: flex; }
 
-        /* START SCREEN */
-        .menu-panel {
-            background: rgba(255, 255, 255, 0.95);
+        /* --- 1. SETUP SCREEN --- */
+        .setup-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
             border-radius: 20px;
             padding: 20px;
             text-align: center;
             border: 4px solid var(--primary);
-            margin: auto; /* Center in screen */
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
+
+        h1 { color: var(--primary); margin: 0 0 15px 0; font-size: 1.8rem; }
         
-        h1 { color: var(--primary); margin: 10px 0; font-size: 1.8rem; }
-        
-        .year-btn-grid {
+        .year-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 12px;
+            margin-top: 10px;
         }
 
         .btn-year {
-            background: white;
+            background: #f8f9fa;
             border: 2px solid var(--primary);
             color: var(--primary);
             padding: 15px 5px;
@@ -88,43 +85,50 @@
             font-weight: bold;
             cursor: pointer;
         }
-        .btn-year:active { background: var(--primary); color: white; transform: scale(0.95); }
+        .btn-year:active { background: var(--primary); color: white; }
 
-        /* GAME LAYOUT - FIXING THE GAP */
-        .game-header {
+
+        /* --- 2. GAME SCREEN (Split Layout) --- */
+        
+        /* Top Section: Header + Question */
+        .game-top {
+            flex: 0 0 auto; /* Changed from flex: 4 to prevent flex growing issues */
+            display: flex;
+            flex-direction: column;
+            padding: 10px 15px;
+            position: relative;
+            z-index: 1; /* Lower than game-bottom */
+        }
+
+        .header {
             display: flex; justify-content: space-between; align-items: center;
-            color: white; font-weight: bold; height: 50px; flex-shrink: 0;
+            color: white; font-weight: bold; font-size: 1.1rem;
         }
 
         .btn-quit {
             background: var(--secondary); color: white; border: none;
-            padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer;
+            padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            cursor: pointer;
         }
 
-        /* Wrapper to center content vertically */
-        .game-content-wrapper {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* This centers everything vertically */
-            gap: 15px; /* Consistent small gap between question and keys */
-            padding-bottom: 20px;
-        }
-
-        /* QUESTION CARD */
-        .question-card {
+        .question-box {
             background: white;
             border-radius: 20px;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            min-height: 180px; /* Fixed height instead of flex-grow */
         }
 
-        .question-text { font-size: 3rem; color: #333; font-weight: bold; margin-bottom: 10px; }
+        .math-text { font-size: 2.8rem; font-weight: 800; color: #333; margin-bottom: 5px; }
         
-        .answer-display {
-            background: #f4f4f4;
-            border: 3px solid #ddd;
+        .input-display {
+            background: #eee;
+            border: 3px solid #ccc;
             border-radius: 12px;
             height: 60px;
             display: flex;
@@ -133,339 +137,318 @@
             font-size: 2.5rem;
             font-weight: bold;
             color: var(--primary);
+            margin: 5px auto;
+            width: 100%;
+            max-width: 300px;
         }
-        .answer-display.active { border-color: var(--accent); background: white; }
+        .input-display.filled { background: white; border-color: var(--accent); }
+        .feedback { height: 20px; font-weight: bold; font-size: 1.2rem; margin-top: 5px; }
+        .correct { color: #00c851; } .wrong { color: var(--secondary); }
 
-        .feedback-msg { height: 25px; margin-top: 10px; font-weight: bold; font-size: 1.2rem; }
-        .correct { color: #00C851; }
-        .wrong { color: var(--secondary); }
+        /* Bottom Section: Keypad */
+        .game-bottom {
+            flex: 1; /* Takes remaining space */
+            background: #f4f4f4;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 100; /* Higher z-index to ensure it's on top */
+            pointer-events: auto; /* Ensure it can receive clicks */
+        }
 
-        /* NUMPAD - BIGGER BUTTONS */
         .numpad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
+            height: 100%;
+            position: relative;
+            z-index: 101; /* Ensure numpad is on top */
         }
 
-        .key-btn {
+        .key {
             background: white;
             border: none;
             border-radius: 15px;
             font-size: 2rem;
             font-weight: bold;
             color: #333;
-            box-shadow: 0 4px 0 #bbb;
+            box-shadow: 0 4px 0 #ddd;
             cursor: pointer;
-            height: 65px; /* Fixed height for touch targets */
-            transition: transform 0.1s;
+            height: 100%;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            position: relative;
+            z-index: 102; /* Buttons on top */
+            pointer-events: auto; /* Ensure buttons receive clicks */
         }
+        .key:active { background: #e0e0e0; transform: translateY(2px); box-shadow: none; }
         
-        .key-btn:active { transform: translateY(4px); box-shadow: none; background: #eee; }
-        .key-btn.special { background: var(--secondary); color: white; box-shadow: 0 4px 0 #c23a54; }
-        .key-btn.enter { background: var(--primary); color: white; box-shadow: 0 4px 0 #4a43b8; }
+        .key-del { background: #ffbdc9; color: #c21d42; }
+        .key-go { background: var(--primary); color: white; box-shadow: 0 4px 0 #4a43b8; }
 
         /* RESULTS */
-        .btn-restart {
-            width: 100%; padding: 15px;
+        .btn-big {
+            width: 100%; padding: 18px;
             background: var(--primary); color: white;
             border: none; border-radius: 50px;
-            font-size: 1.3rem; margin-top: 20px; cursor: pointer;
+            font-size: 1.4rem; margin-top: 20px;
+            cursor: pointer;
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .shake { animation: shake 0.4s ease-in-out; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        /* Animations */
+        .shake { animation: shake 0.4s; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
 
-        /* Tablet/Desktop Tweaks */
-        @media (min-height: 800px) {
-            .question-text { font-size: 4rem; margin-bottom: 20px; }
-            .key-btn { height: 80px; }
-            .game-content-wrapper { gap: 30px; }
+        /* Tablet Tweak */
+        @media (min-width: 600px) {
+            .math-text { font-size: 4rem; }
+            .game-bottom { max-height: 500px; border-radius: 30px; margin: 0 20px 20px 20px; }
         }
     </style>
 </head>
 <body>
 
-<div class="stars"></div>
+    <div class="stars"></div>
 
-<div class="app-container">
-    
-    <div id="screen-setup" class="screen active">
-        <div class="menu-panel">
-            <h1>🚀 Astro Maths</h1>
-            <p>Select your Mission:</p>
-            <div class="year-btn-grid" id="year-menu">
-                </div>
+    <div id="setup" class="screen active">
+        <div class="setup-container">
+            <div class="card">
+                <h1>🚀 Maths Academy</h1>
+                <p>Select Year Group:</p>
+                <div class="year-grid" id="menu"></div>
+            </div>
         </div>
     </div>
 
-    <div id="screen-game" class="screen">
-        <div class="game-header">
-            <button class="btn-quit" onclick="quitGame()">❌ Quit</button>
-            <span id="lbl-year">Year 3</span>
-            <span>⭐ <span id="lbl-score">0</span></span>
+    <div id="game" class="screen">
+        <div class="game-top">
+            <div class="header">
+                <button class="btn-quit" onclick="window.game.quit()">❌ Quit</button>
+                <span id="lbl-year">Year 3</span>
+                <span>⭐ <span id="lbl-score">0</span></span>
+            </div>
+            <div class="question-box">
+                <div class="math-text" id="q-text">?</div>
+                <div class="input-display" id="inp-text"></div>
+                <div class="feedback" id="feedback"></div>
+            </div>
         </div>
 
-        <div class="game-content-wrapper">
-            <div class="question-card">
-                <div class="question-text" id="question">?</div>
-                <div class="answer-display" id="display"></div>
-                <div class="feedback-msg" id="feedback"></div>
-            </div>
-
+        <div class="game-bottom">
             <div class="numpad">
-                <button class="key-btn" onclick="input('1')">1</button>
-                <button class="key-btn" onclick="input('2')">2</button>
-                <button class="key-btn" onclick="input('3')">3</button>
-                <button class="key-btn" onclick="input('4')">4</button>
-                <button class="key-btn" onclick="input('5')">5</button>
-                <button class="key-btn" onclick="input('6')">6</button>
-                <button class="key-btn" onclick="input('7')">7</button>
-                <button class="key-btn" onclick="input('8')">8</button>
-                <button class="key-btn" onclick="input('9')">9</button>
-                <button class="key-btn special" onclick="input('DEL')">DEL</button>
-                <button class="key-btn" onclick="input('0')">0</button>
-                <button class="key-btn enter" onclick="checkAnswer()">GO</button>
+                <button class="key" onclick="window.game.input('1')">1</button>
+                <button class="key" onclick="window.game.input('2')">2</button>
+                <button class="key" onclick="window.game.input('3')">3</button>
+                <button class="key" onclick="window.game.input('4')">4</button>
+                <button class="key" onclick="window.game.input('5')">5</button>
+                <button class="key" onclick="window.game.input('6')">6</button>
+                <button class="key" onclick="window.game.input('7')">7</button>
+                <button class="key" onclick="window.game.input('8')">8</button>
+                <button class="key" onclick="window.game.input('9')">9</button>
+                <button class="key key-del" onclick="window.game.input('DEL')">DEL</button>
+                <button class="key" onclick="window.game.input('0')">0</button>
+                <button class="key key-go" onclick="window.game.check()">GO</button>
             </div>
         </div>
     </div>
 
-    <div id="screen-result" class="screen">
-        <div class="menu-panel">
-            <h1>Mission Complete!</h1>
-            <p>Score: <strong id="res-score" style="font-size:1.5rem">0</strong></p>
-            <p>High Score: <strong id="res-high">0</strong></p>
-            <button class="btn-restart" onclick="showSetup()">Play Again 🔄</button>
+    <div id="results" class="screen">
+        <div class="setup-container">
+            <div class="card">
+                <h1>Mission Complete!</h1>
+                <p>Score: <strong id="final-score" style="font-size:1.5rem">0</strong></p>
+                <button class="btn-big" onclick="window.game.showSetup()">Play Again 🔄</button>
+            </div>
         </div>
     </div>
 
-</div>
+    <script>
+        window.game = {
+            years: [
+                { id: 0, label: "Reception", desc: "Add to 10" },
+                { id: 1, label: "Year 1", desc: "Add/Sub to 20" },
+                { id: 2, label: "Year 2", desc: "Tables 2,5,10" },
+                { id: 3, label: "Year 3", desc: "x3,x4,x8 & 3-Digit" },
+                { id: 4, label: "Year 4", desc: "Tables up to 12" },
+                { id: 5, label: "Year 5", desc: "Big Mix" },
+                { id: 6, label: "Year 6", desc: "Expert" }
+            ],
+            state: { year: 0, score: 0, current: "", q: null, count: 0, active: false },
+            audioCtx: null,
 
-<script>
-    // --- 1. CONFIGURATION ---
-    const years = [
-        { id: 0, label: "Reception", desc: "Add to 10" },
-        { id: 1, label: "Year 1", desc: "Add/Sub to 20" },
-        { id: 2, label: "Year 2", desc: "Tables 2,5,10" },
-        { id: 3, label: "Year 3", desc: "x3,x4,x8 & 3-Digit" },
-        { id: 4, label: "Year 4", desc: "Tables up to 12" },
-        { id: 5, label: "Year 5", desc: "Big Mix" },
-        { id: 6, label: "Year 6", desc: "Expert" }
-    ];
+            init: function() {
+                const menu = document.getElementById('menu');
+                this.years.forEach(y => {
+                    let btn = document.createElement('button');
+                    btn.className = 'btn-year';
+                    btn.innerHTML = `${y.label}<br><small>${y.desc}</small>`;
+                    btn.onclick = () => this.start(y.id);
+                    menu.appendChild(btn);
+                });
+            },
 
-    let state = {
-        active: false,
-        year: 0,
-        score: 0,
-        inputStr: "",
-        q: { text: "", ans: 0 },
-        qCount: 0
-    };
+            play: function(type) {
+                try {
+                    if(!this.audioCtx) this.audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+                    if(this.audioCtx.state === 'suspended') this.audioCtx.resume();
+                    
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    const now = this.audioCtx.currentTime;
 
-    // --- 2. AUDIO SYSTEM (Fixes Sound Issues) ---
-    let audioCtx = null;
-
-    function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    }
-
-    function playSound(type) {
-        if (!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        const now = audioCtx.currentTime;
-
-        if (type === 'tap') {
-            osc.frequency.setValueAtTime(600, now);
-            gain.gain.setValueAtTime(0.05, now);
-            osc.stop(now + 0.05);
-        } else if (type === 'correct') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(400, now);
-            osc.frequency.linearRampToValueAtTime(800, now + 0.1);
-            gain.gain.setValueAtTime(0.1, now);
-            gain.gain.linearRampToValueAtTime(0, now + 0.3);
-            osc.stop(now + 0.3);
-        } else if (type === 'wrong') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(200, now);
-            gain.gain.setValueAtTime(0.1, now);
-            gain.gain.linearRampToValueAtTime(0, now + 0.3);
-            osc.stop(now + 0.3);
-        }
-        osc.start(now);
-    }
-
-    // --- 3. INIT ---
-    // Create Menu Buttons
-    const menuDiv = document.getElementById('year-menu');
-    years.forEach(y => {
-        let btn = document.createElement('button');
-        btn.className = 'btn-year';
-        btn.innerHTML = `${y.label}<br><small>${y.desc}</small>`;
-        btn.onclick = () => startGame(y.id);
-        menuDiv.appendChild(btn);
-    });
-
-    // --- 4. GAME LOGIC ---
-    function startGame(id) {
-        // Initialize Audio on first user interaction
-        initAudio();
-
-        state.year = id;
-        state.score = 0;
-        state.qCount = 0;
-        state.active = true;
-        
-        document.getElementById('lbl-year').innerText = years[id].label;
-        document.getElementById('lbl-score').innerText = "0";
-        
-        switchScreen('screen-game');
-        nextQuestion();
-    }
-
-    function nextQuestion() {
-        if (state.qCount >= 10) {
-            endGame();
-            return;
-        }
-        state.qCount++;
-        state.inputStr = "";
-        state.q = generateMath(state.year);
-        
-        // Reset UI
-        document.getElementById('question').innerText = state.q.text;
-        document.getElementById('feedback').innerText = "";
-        document.getElementById('display').classList.remove('active');
-        updateDisplay();
-        state.active = true; // Unlock input
-    }
-
-    function generateMath(year) {
-        const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-        let n1, n2, op, text, ans;
-        let r = Math.random();
-
-        switch(year) {
-            case 0: n1=randInt(1,5); n2=randInt(1,4); op='+'; break;
-            case 1: op=r>0.5?'+':'-'; n1=randInt(5,20); n2=randInt(1,9); break;
-            case 2: 
-                if(r>0.6){ n1=[2,5,10][randInt(0,2)]; n2=randInt(1,12); op='x'; }
-                else { op=r>0.8?'-':'+'; n1=randInt(10,50); n2=randInt(2,20); }
-                break;
-            case 3: // Year 3
-                if(r>0.5) { n1=[3,4,8][randInt(0,2)]; n2=randInt(1,12); op='x'; }
-                else { 
-                    op=r>0.7?'-':'+'; 
-                    if(op==='+'){ n1=randInt(100,500); n2=randInt(10,300); }
-                    else { n1=randInt(200,800); n2=randInt(10,150); }
+                    if(type === 'tap') {
+                        osc.frequency.setValueAtTime(600, now);
+                        gain.gain.setValueAtTime(0.05, now);
+                        osc.start(now);
+                        osc.stop(now+0.05);
+                    } else if(type === 'win') {
+                        osc.frequency.setValueAtTime(500, now);
+                        osc.frequency.linearRampToValueAtTime(1000, now+0.1);
+                        gain.gain.setValueAtTime(0.1, now);
+                        gain.gain.linearRampToValueAtTime(0, now+0.4);
+                        osc.start(now);
+                        osc.stop(now+0.4);
+                    } else {
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(200, now);
+                        gain.gain.setValueAtTime(0.1, now);
+                        gain.gain.linearRampToValueAtTime(0, now+0.3);
+                        osc.start(now);
+                        osc.stop(now+0.3);
+                    }
+                } catch(e) {
+                    console.log('Audio error:', e);
                 }
-                break;
-            case 4: n1=randInt(2,12); n2=randInt(2,12); op='x'; break;
-            default:
-                if(r>0.6){ n1=randInt(100,900); n2=randInt(50,400); op=r>0.8?'-':'+'; }
-                else { n1=randInt(3,15); n2=randInt(10,50); op='x'; }
-        }
+            },
 
-        // Safety for negatives
-        if(op==='-' && n1<n2) [n1,n2]=[n2,n1];
+            start: function(id) {
+                this.state.year = id;
+                this.state.score = 0;
+                this.state.count = 0;
+                document.getElementById('lbl-year').innerText = this.years[id].label;
+                document.getElementById('lbl-score').innerText = "0";
+                this.switch('game');
+                this.next();
+            },
 
-        if(op==='+') ans=n1+n2;
-        if(op==='-') ans=n1-n2;
-        if(op==='x') ans=n1*n2;
+            next: function() {
+                if(this.state.count >= 10) return this.end();
+                this.state.count++;
+                this.state.current = "";
+                this.state.active = true;
+                
+                const rand = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
+                let n1, n2, op, ans;
+                let y = this.state.year;
+                let r = Math.random();
 
-        return { text: `${n1} ${op==='x'?'×':op} ${n2} = ?`, ans: ans };
-    }
+                if(y===0) { n1=rand(1,5); n2=rand(1,4); op='+'; }
+                else if(y===1) { op=r>0.5?'+':'-'; n1=rand(5,20); n2=rand(1,9); }
+                else if(y===2) {
+                    if(r>0.6){ n1=[2,5,10][rand(0,2)]; n2=rand(1,12); op='x'; }
+                    else { op=r>0.8?'-':'+'; n1=rand(10,50); n2=rand(2,20); }
+                }
+                else if(y===3) {
+                    if(r>0.5) {
+                        n1=[3,4,8][rand(0,2)]; n2=rand(1,12); op='x'; 
+                    } else {
+                        op=r>0.7?'-':'+';
+                        if(op==='+'){ n1=rand(100,500); n2=rand(10,300); }
+                        else { n1=rand(200,800); n2=rand(10,150); }
+                    }
+                }
+                else if(y===4) { n1=rand(2,12); n2=rand(2,12); op='x'; }
+                else {
+                    if(r>0.6){ n1=rand(100,900); n2=rand(50,400); op=r>0.8?'-':'+'; }
+                    else { n1=rand(3,15); n2=rand(10,50); op='x'; }
+                }
 
-    // --- 5. INPUT HANDLING ---
-    function input(val) {
-        if (!state.active) return;
-        
-        if (val === 'DEL') {
-            state.inputStr = state.inputStr.slice(0, -1);
-        } else {
-            // LIMIT INPUT TO 4 DIGITS
-            if (state.inputStr.length < 4) {
-                state.inputStr += val;
+                if(op==='-' && n1<n2) [n1,n2]=[n2,n1];
+                if(op==='+') ans = n1+n2;
+                if(op==='-') ans = n1-n2;
+                if(op==='x') ans = n1*n2;
+
+                this.state.q = { text: `${n1} ${op==='x'?'×':op} ${n2} = ?`, ans: ans };
+                
+                document.getElementById('q-text').innerText = this.state.q.text;
+                document.getElementById('feedback').innerText = "";
+                this.updateInput();
+            },
+
+            input: function(val) {
+                console.log("Input clicked:", val); // DEBUG
+                if(!this.state.active) return;
+                
+                if(val === 'DEL') {
+                    this.state.current = this.state.current.slice(0, -1);
+                } else {
+                    if(this.state.current.length < 5) this.state.current += val;
+                }
+                this.play('tap');
+                this.updateInput();
+            },
+
+            updateInput: function() {
+                let el = document.getElementById('inp-text');
+                el.innerText = this.state.current;
+                if(this.state.current.length > 0) el.classList.add('filled');
+                else el.classList.remove('filled');
+            },
+
+            check: function() {
+                if(!this.state.active || this.state.current === "") return;
+                
+                let user = parseInt(this.state.current);
+                let fb = document.getElementById('feedback');
+                
+                if(user === this.state.q.ans) {
+                    this.state.active = false;
+                    this.state.score += 10;
+                    document.getElementById('lbl-score').innerText = this.state.score;
+                    fb.innerText = "Correct! 🌟";
+                    fb.className = "feedback correct";
+                    this.play('win');
+                    setTimeout(() => this.next(), 1000);
+                } else {
+                    fb.innerText = "Try again!";
+                    fb.className = "feedback wrong";
+                    document.getElementById('inp-text').classList.add('shake');
+                    this.play('wrong');
+                    this.state.current = "";
+                    setTimeout(() => {
+                        document.getElementById('inp-text').classList.remove('shake');
+                        this.updateInput();
+                    }, 400);
+                }
+            },
+
+            end: function() {
+                document.getElementById('final-score').innerText = this.state.score;
+                this.switch('results');
+                this.play('win');
+            },
+
+            quit: function() {
+                if(confirm("Exit Mission?")) this.showSetup();
+            },
+
+            showSetup: function() {
+                this.switch('setup');
+            },
+
+            switch: function(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
             }
-        }
-        playSound('tap');
-        updateDisplay();
-    }
+        };
 
-    function updateDisplay() {
-        let disp = document.getElementById('display');
-        disp.innerText = state.inputStr;
-        if(state.inputStr.length > 0) disp.classList.add('active');
-        else disp.classList.remove('active');
-    }
-
-    function checkAnswer() {
-        if (!state.active || state.inputStr === "") return;
-        
-        let userAns = parseInt(state.inputStr);
-        let fb = document.getElementById('feedback');
-        
-        if (userAns === state.q.ans) {
-            // CORRECT
-            state.active = false; // Lock input
-            state.score += 10;
-            document.getElementById('lbl-score').innerText = state.score;
-            fb.innerText = "Correct! 🌟";
-            fb.className = "feedback-msg correct";
-            playSound('correct');
-            
-            // AUTO ADVANCE
-            setTimeout(() => {
-                nextQuestion();
-            }, 1000);
-
-        } else {
-            // WRONG
-            fb.innerText = "Try again!";
-            fb.className = "feedback-msg wrong";
-            document.getElementById('display').classList.add('shake');
-            playSound('wrong');
-            state.inputStr = "";
-            setTimeout(() => {
-                document.getElementById('display').classList.remove('shake');
-                updateDisplay();
-            }, 400);
-        }
-    }
-
-    function endGame() {
-        const key = `astro_high_${state.year}`;
-        const high = parseInt(localStorage.getItem(key)||0);
-        if(state.score > high) localStorage.setItem(key, state.score);
-
-        document.getElementById('res-score').innerText = state.score;
-        document.getElementById('res-high').innerText = Math.max(state.score, high);
-        switchScreen('screen-result');
-        playSound('correct');
-    }
-
-    // --- 6. UTILS ---
-    function quitGame() {
-        if(confirm("Exit Mission?")) showSetup();
-    }
-
-    function showSetup() {
-        switchScreen('screen-setup');
-    }
-
-    function switchScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-</script>
+        window.onload = function() { window.game.init(); };
+    </script>
 </body>
 </html>
