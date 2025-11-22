@@ -65,8 +65,8 @@
   #controls button:hover {
     background: #554abb;
   }
-  /* Landscape only on mobile shows split layout */
-  @media (orientation: landscape) and (max-width: 768px) {
+  /* Expanded landscape to max-width 1200px for tablets */
+  @media (orientation: landscape) and (max-width: 1200px) {
     #container {
       flex-direction: row;
       overflow: hidden;
@@ -1348,7 +1348,7 @@
     let currentColor = colorPicker.value;
     let currentLineWidth = parseInt(lineWidthRange.value);
     let lastX, lastY;
-    let paths = []; // Store paths for undo
+    let paths = [];
     let currentPath = [];
 
     function setCanvasSize() {
@@ -1417,7 +1417,6 @@
       }
     }
 
-    // Mouse events
     canvas.addEventListener('mousedown', (e) => {
       const rect = canvas.getBoundingClientRect();
       startDrawing(e.clientX - rect.left, e.clientY - rect.top);
@@ -1429,7 +1428,6 @@
     });
     window.addEventListener('mouseup', stopDrawing);
 
-    // Touch events
     canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
       if(e.touches.length === 1) {
@@ -1450,12 +1448,12 @@
       if(drawing) stopDrawing();
     });
 
-    // Control events
     colorPicker.addEventListener('change', (e) => {
       currentColor = e.target.value;
       if(currentTool === 'eraser') {
-        // switch back to pen automatically when choosing color
         currentTool = 'pen';
+        penBtn.style.background = '#6c63ff';
+        eraserBtn.style.background = '';
       }
     });
 
@@ -1487,12 +1485,9 @@
       redraw();
     });
 
-    // Initialize pen selected style
     penBtn.style.background = '#6c63ff';
 
-    // Optional: prevent scrolling on canvas when drawing on touch
     canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
-
   })();
 </script>
 </body>
