@@ -93,9 +93,9 @@
     margin-top: 20px;
   }
   .numpad-btn {
-    width: 160px;
-    height: 120px;
-    font-size: 64px;
+    width: 80px;
+    height: 80px;
+    font-size: 32px;
     margin: 6px;
     border-radius: 10px;
     cursor: pointer;
@@ -106,7 +106,7 @@
 <div id="container">
   <div id="mainContent">
     <button id="toggleDrawingBtn">Show Drawing Space</button>
-    <h1>Lets do Math</h1>
+    <h1>Your Existing Content</h1>
     <p><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -504,7 +504,8 @@
         }
 
         .key {
-            width: 120px;
+            min-width: 100px;
+            max-width: 100px;
             background: white;
             border: none;
             border-radius: 12px;
@@ -520,7 +521,7 @@
             z-index: 102;
             pointer-events: auto;
             min-height: 80px;
-            max-height: 100px;
+            max-height: 80px;
             padding: 15px 10px;
             display: flex;
             align-items: center;
@@ -1337,7 +1338,11 @@
         window.onload = function() { window.game.init(); };
     </script>
 </body>
-</html>
+</html></p>
+    <!-- Number pad buttons with correct sizing -->
+    <div id="numpad">
+    </div>
+  </div>
   <div id="drawingContainer">
     <canvas id="drawingCanvas"></canvas>
     <div id="controls">
