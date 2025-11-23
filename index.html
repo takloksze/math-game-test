@@ -106,6 +106,7 @@
 <div id="container">
   <div id="mainContent">
     <button id="toggleDrawingBtn">Show Drawing Space</button>
+    <h1>Your Existing Content</h1>
     <p><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -503,9 +504,9 @@
         }
 
         .key {
+            background: white;
             min-width: 100px;
             max-width: 100px;
-            background: white;
             border: none;
             border-radius: 12px;
             font-size: 1.6rem;
@@ -519,8 +520,8 @@
             position: relative;
             z-index: 102;
             pointer-events: auto;
-            min-height: 80px;
-            max-height: 80px;
+            min-height: 60px;
+            max-height: 60px;
             padding: 15px 10px;
             display: flex;
             align-items: center;
@@ -819,7 +820,7 @@
                 return users[username];
             },
 
-            saveSession: function(sessionData) {
+saveSession: function(sessionData) {
                 const users = this.getUsers();
                 const userData = users[this.currentUser];
                 
@@ -834,9 +835,13 @@
                 userData.totalQuestions += sessionData.questionCount;
                 userData.totalSessions += 1;
                 
+                // Find the year label safely
+                const yearObj = this.years.find(y => y.id === sessionData.year);
+                const yearLabel = yearObj ? yearObj.label : 'Unknown';
+                
                 userData.history.push({
                     date: new Date().toISOString(),
-                    year: this.years[sessionData.year].label,
+                    year: yearLabel,
                     questionCount: sessionData.questionCount,
                     totalTime: sessionData.totalTime,
                     avgTime: sessionData.avgTime,
